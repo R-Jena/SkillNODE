@@ -1,0 +1,129 @@
+# ==============================================================================
+# SkillNODE Makefile - Developer Convenience Commands
+# ==============================================================================
+
+.PHONY: help install setup dev dev-client dev-server build build-client build-server \
+        db-up db-down db-logs db-generate db-push db-studio \
+        lint test audit ci clean clean-all
+
+# Default target when running `make`
+.DEFAULT_GOAL := help
+
+# ------------------------------------------------------------------------------
+# HELP / DOCUMENTATION
+# ------------------------------------------------------------------------------
+help:
+	@echo "================================================================================"
+	@echo " SkillNODE Development & Automation Commands"
+	@echo "================================================================================"
+	@echo "Setup & Dependencies:"
+	@echo "  make install        - Install root and workspace npm dependencies"
+	@echo "  make setup          - Full project setup (install + prisma client generation)"
+	@echo ""
+	@echo "Development:"
+	@echo "  make dev-client     - Launch frontend Vite dev server (React 19)"
+	@echo "  make dev-server     - Launch backend Node dev server (Nodemon + Express)"
+	@echo ""
+	@echo "Build:"
+	@echo "  make build          - Build client and verify server syntax"
+	@echo "  make build-client   - Build client production bundle (Vite)"
+	@echo "  make build-server   - Validate server syntax and modules"
+	@echo ""
+	@echo "Database & Docker:"
+	@echo "  make db-up          - Start PostgreSQL container in background (docker-compose)"
+	@echo "  make db-down        - Stop PostgreSQL container"
+	@echo "  make db-logs        - Stream logs from PostgreSQL container"
+	@echo "  make db-generate    - Generate Prisma Client for server"
+	@echo "  make db-push        - Push Prisma schema migrations to database"
+	@echo "  make db-studio      - Open Prisma Studio GUI"
+	@echo ""
+	@echo "Quality & Security:"
+	@echo "  make test           - Run project test suites"
+	@echo "  make lint           - Run ESLint checks"
+	@echo "  make audit          - Run npm security vulnerability audit"
+	@echo "  make ci             - Run complete local CI check (build + audit)"
+	@echo ""
+	@echo "Cleanup:"
+	@echo "  make clean          - Remove build artifacts and caches"
+	@echo "  make clean-all      - Remove build artifacts and node_modules"
+	@echo "================================================================================"
+
+# ------------------------------------------------------------------------------
+# SETUP & DEPENDENCIES
+# ------------------------------------------------------------------------------
+install:
+	npm ci
+
+setup: install db-generate
+
+# ------------------------------------------------------------------------------
+# DEVELOPMENT
+# ------------------------------------------------------------------------------
+dev-client:
+	npm run dev:client
+
+dev-server:
+	npm run dev:server
+
+# ------------------------------------------------------------------------------
+# BUILD
+# ------------------------------------------------------------------------------
+build:
+	npm run build
+
+build-client:
+	npm run build:client
+
+build-server:
+	npm run build -w server
+
+# ------------------------------------------------------------------------------
+# DATABASE & DOCKER
+# ------------------------------------------------------------------------------
+db-up:
+	docker compose up -d postgres
+
+db-down:
+	docker compose down
+
+db-logs:
+	docker compose logs -f postgres
+
+db-generate:
+	npm run prisma:generate -w server
+
+db-push:
+	npm run db:push
+
+db-studio:
+	npx prisma studio --schema=server/prisma/schema.prisma
+
+# ------------------------------------------------------------------------------
+# TESTING & SECURITY
+# ------------------------------------------------------------------------------
+test:
+	npm test -w client
+
+lint:
+	npx eslint .
+
+audit:
+	npm audit --audit-level=high
+
+ci: build audit
+
+# ------------------------------------------------------------------------------
+# CLEANUP
+# ------------------------------------------------------------------------------
+clean:
+	@echo "Cleaning build artifacts..."
+	@if exist client\dist rmdir /s /q client\dist
+	@if exist client\.vite rmdir /s /q client\.vite
+	@echo "Done."
+
+clean-all: clean
+	@echo "Removing node_modules..."
+	@if exist node_modules rmdir /s /q node_modules
+	@if exist client\node_modules rmdir /s /q client\node_modules
+	@if exist server\node_modules rmdir /s /q server\node_modules
+	@echo "Done."

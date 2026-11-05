@@ -1,19 +1,41 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+  push:
+    branches:
+      - main
+
+# STRICT RULE 1: Revoke all default token permissions at top-level
+permissions: read-all
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  build:
+  # ==========================================
+  # JOB 1: Build, Verify & Test
+  # ==========================================
+  build-and-verify:
     name: Build & Verify
     runs-on: ubuntu-latest
+    # STRICT RULE 2 & 3: Read-only scope, safe against forked PR malicious code execution
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # Prevent local git configuration from storing credentials
+          persist-credentials: false
 
       - name: Set up Node.js 22
         uses: actions/setup-node@v4
@@ -29,3 +51,31 @@ jobs:
 
       - name: Build client and verify server
         run: npm run build
+
+      - name: Security audit
+        run: npm audit --audit-level=high
+
+  # ==========================================
+  # JOB 2: Release & Tagging (Only on Main)
+  # ==========================================
+  release:
+    name: Automated Release
+    needs: [build-and-verify]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # STRICT RULE 2: Explicitly grant 'write' permissions ONLY where strictly needed
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Release verification
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Main branch build and security checks verified successfully."
+          echo "Automated release checkpoint reached with scoped contents:write permissions."
