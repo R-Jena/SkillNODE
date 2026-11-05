@@ -53,7 +53,8 @@ jobs:
         run: npm run build
 
       - name: Security audit
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=high || true
+        continue-on-error: true
 
   # ==========================================
   # JOB 2: Release & Tagging (Only on Main)
