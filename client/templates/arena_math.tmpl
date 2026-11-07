@@ -1,0 +1,66 @@
+{{define "arena_math"}}
+<div id="view-activity-math" class="page-view flex-col-fill" style="gap: 20px; padding-bottom: 48px; display: none;">
+
+  <!-- Hero Header -->
+  <div class="card" style="padding: 24px 28px; background: linear-gradient(135deg, var(--surface), var(--surface-2)); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">QUANT LAB</span>
+        <span style="font-size: 0.72rem; font-weight: 700; color: #fbbf24; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); padding: 2px 8px; border-radius: 999px;">
+          45s Sprint
+        </span>
+      </div>
+      <div class="display-title" style="font-size: 1.45rem; color: var(--text);">Math Clash: Mental Velocity</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <button id="mathStartBtn" class="btn btn-primary btn-sm" style="border-radius: 9999px; gap: 6px;">
+        <i class="fas fa-play"></i> Start Sprint
+      </button>
+      <a href="#/activities" class="btn btn-ghost btn-sm" style="border-radius: 9999px;">Exit</a>
+    </div>
+  </div>
+
+  <!-- HUD: Score, Timer, Streak, Multiplier -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="margin-bottom: 4px;">Score</div>
+      <div id="mathLiveScore" style="font-size: 2rem; font-weight: 800; color: #fbbf24;">0</div>
+    </div>
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="margin-bottom: 4px;">Time Remaining</div>
+      <div id="mathLiveTime" style="font-size: 2rem; font-weight: 800; color: var(--text);">45s</div>
+    </div>
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="margin-bottom: 4px;">Streak</div>
+      <div id="mathLiveStreak" style="font-size: 2rem; font-weight: 800; color: var(--accent-bright);">0 🔥</div>
+    </div>
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="margin-bottom: 4px;">Multiplier</div>
+      <div id="mathLiveMultiplier" style="font-size: 2rem; font-weight: 800; color: #10b981;">1.0x</div>
+    </div>
+  </div>
+
+  <!-- Interactive Question Card -->
+  <div class="card" style="padding: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 280px; text-align: center; gap: 24px;">
+    <div id="mathEquationPrompt" style="font-family: 'JetBrains Mono', monospace; font-size: 2.8rem; font-weight: 800; color: var(--text); letter-spacing: 0.05em;">
+      Press 'Start Sprint'
+    </div>
+
+    <div style="width: 100%; max-width: 320px;">
+      <input
+        id="mathAnswerInput"
+        type="number"
+        class="field"
+        placeholder="Type answer & press Enter"
+        disabled
+        style="height: 52px; font-size: 1.4rem; text-align: center; font-family: 'JetBrains Mono', monospace; border-radius: 14px; font-weight: 700;"
+      />
+    </div>
+
+    <div id="mathFeedbackNote" style="font-size: 0.88rem; color: var(--text-muted); min-height: 20px;">
+      Adaptive calculus, algebra, and rapid arithmetic drills.
+    </div>
+  </div>
+
+</div>
+{{end}}

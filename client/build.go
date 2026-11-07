@@ -73,10 +73,41 @@ func buildAll() {
 	buildStyles()
 	buildWasm()
 	ensureWasmExec()
+	syncDist()
 
 	fmt.Println("==================================================")
 	fmt.Println(" Build complete. Zero node_modules generated.")
 	fmt.Println("==================================================")
+}
+
+func syncDist() {
+	distDir := "dist"
+	if err := os.MkdirAll(filepath.Join(distDir, "wasm"), 0755); err != nil {
+		log.Printf("Warning creating dist directory: %v", err)
+		return
+	}
+
+	copyFile("index.html", filepath.Join(distDir, "index.html"))
+	copyFile("styles.css", filepath.Join(distDir, "styles.css"))
+	copyFile(filepath.Join("wasm", "app.wasm"), filepath.Join(distDir, "wasm", "app.wasm"))
+	copyFile(filepath.Join("wasm", "wasm_exec.js"), filepath.Join(distDir, "wasm", "wasm_exec.js"))
+
+	if _, err := os.Stat("logo.png"); err == nil {
+		copyFile("logo.png", filepath.Join(distDir, "logo.png"))
+	} else if _, err := os.Stat(filepath.Join("public", "logo.png")); err == nil {
+		copyFile(filepath.Join("public", "logo.png"), filepath.Join(distDir, "logo.png"))
+		copyFile(filepath.Join("public", "logo.png"), "logo.png")
+	}
+
+	fmt.Println("    Synced output to dist/ for Vercel deployment.")
+}
+
+func copyFile(src, dst string) {
+	data, err := os.ReadFile(src)
+	if err != nil {
+		return
+	}
+	_ = os.WriteFile(dst, data, 0644)
 }
 
 func buildTemplates() {

@@ -1,0 +1,87 @@
+{{define "profile"}}
+<div id="view-profile" class="page-view flex-col-fill" style="gap: 20px; padding-bottom: 48px; display: none;">
+
+  <!-- Hero Profile Header Card -->
+  <div class="card" style="padding: 32px 36px; background: linear-gradient(135deg, var(--surface), var(--surface-2));">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <!-- Avatar Ring -->
+        <div id="profileAvatarRing" class="avatar-ring" style="width: 80px; height: 80px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          O
+        </div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div id="profileNameDisplay" class="display-title" style="font-size: 1.6rem; color: var(--text);">
+              Operator
+            </div>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 0.72rem; padding: 3px 8px;">
+              <i class="fas fa-check-circle"></i> VERIFIED
+            </span>
+          </div>
+          <div id="profileHandleDisplay" style="font-size: 0.88rem; color: var(--accent-bright); margin-top: 2px; font-weight: 600;">
+            @operator
+          </div>
+          <div id="profileBioDisplay" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; max-width: 520px; line-height: 1.5;">
+            Local-first skill operator. Focused on high-speed execution, algorithmic problem solving, and zero-latency competition.
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button id="profileEditModalBtn" class="btn btn-secondary btn-sm" style="border-radius: 9999px; gap: 6px;">
+          <i class="fas fa-edit"></i> Edit Profile
+        </button>
+        <button id="profileShareBtn" class="btn btn-ghost btn-sm" style="border-radius: 9999px; gap: 6px;">
+          <i class="fas fa-share-alt"></i> Share Card
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+    <div class="metric-box">
+      <div class="label-sm" style="margin-bottom: 4px;">Discipline Focus</div>
+      <div style="font-size: 1.35rem; font-weight: 800; color: var(--text);">Typing & Algorithms</div>
+    </div>
+    <div class="metric-box">
+      <div class="label-sm" style="margin-bottom: 4px;">Top Typing Velocity</div>
+      <div id="profileBestWpm" style="font-size: 1.35rem; font-weight: 800; color: var(--accent-bright);">-- WPM</div>
+    </div>
+    <div class="metric-box">
+      <div class="label-sm" style="margin-bottom: 4px;">Session Accuracy</div>
+      <div id="profileBestAccuracy" style="font-size: 1.35rem; font-weight: 800; color: #10b981;">100%</div>
+    </div>
+    <div class="metric-box">
+      <div class="label-sm" style="margin-bottom: 4px;">Fair-Play Rating</div>
+      <div style="font-size: 1.35rem; font-weight: 800; color: #38bdf8;">100 / 100 (Clean)</div>
+    </div>
+  </div>
+
+  <!-- Identity & Hardware Profile Card -->
+  <div class="card" style="padding: 28px;">
+    <div class="label-sm" style="margin-bottom: 12px;">Operator Credentials & Session Info</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+      <div style="padding: 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border-subtle);">
+        <div style="font-size: 0.75rem; color: var(--text-faint);">OPERATOR ID</div>
+        <div id="profileSessionId" style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 600; color: var(--text); margin-top: 4px;">
+          guest-session-local
+        </div>
+      </div>
+      <div style="padding: 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border-subtle);">
+        <div style="font-size: 0.75rem; color: var(--text-faint);">REGION / NODE</div>
+        <div id="profileRegion" style="font-size: 0.85rem; font-weight: 600; color: var(--text); margin-top: 4px;">
+          Global Edge Node
+        </div>
+      </div>
+      <div style="padding: 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border-subtle);">
+        <div style="font-size: 0.75rem; color: var(--text-faint);">STORAGE ENGINE</div>
+        <div style="font-size: 0.85rem; font-weight: 600; color: var(--text); margin-top: 4px;">
+          Browser Local-First Vault
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{{end}}

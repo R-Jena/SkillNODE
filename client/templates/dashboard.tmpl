@@ -1,0 +1,124 @@
+{{define "dashboard"}}
+<div id="view-dashboard" class="page-view flex-col-fill" style="gap: 24px; padding-bottom: 48px;">
+
+  <!-- Row 1: Metrics (Flutter Pill Style) -->
+  <div class="app-card-grid-4" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; flex-shrink: 0;">
+    <div class="metric-box">
+      <div class="label-sm" style="color: var(--text-faint); margin-bottom: 4px;">Total Attempts</div>
+      <div id="metricTotalAttempts" style="font-size: 1.6rem; font-weight: 800; color: var(--text);">0</div>
+    </div>
+    <div class="metric-box">
+      <div class="label-sm" style="color: var(--text-faint); margin-bottom: 4px;">Integrity Alerts</div>
+      <div id="metricAlertCount" style="font-size: 1.6rem; font-weight: 800; color: #f59e0b;">0</div>
+    </div>
+    <div class="metric-box">
+      <div class="label-sm" style="color: var(--text-faint); margin-bottom: 4px;">Personal Bests</div>
+      <div id="metricPersonalBests" style="font-size: 1.6rem; font-weight: 800; color: var(--text);">0</div>
+    </div>
+    <div class="metric-box">
+      <div class="label-sm" style="color: var(--text-faint); margin-bottom: 4px;">Live Competitors</div>
+      <div id="metricCompetitors" style="font-size: 1.6rem; font-weight: 800; color: var(--accent-bright);">1 online</div>
+    </div>
+  </div>
+
+  <!-- Row 2: Tracks + Leaderboard -->
+  <div class="app-main-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px;">
+
+    <!-- Featured Execution Tracks Grid -->
+    <div class="card" style="padding: 26px 28px; display: flex; flex-direction: column;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-shrink: 0;">
+        <div>
+          <span class="flutter-pill-tag" style="font-size: 0.68rem; padding: 3px 10px;">Active Arena</span>
+          <div style="font-size: 1.25rem; font-weight: 800; color: var(--text); margin-top: 4px;">
+            Featured Execution Tracks
+          </div>
+        </div>
+        <a href="#/activities" class="btn btn-ghost btn-sm" style="display: flex; align-items: center; gap: 5px; border-radius: 9999px;">
+          <span>See all tracks</span>
+          <i class="fas fa-arrow-right" style="font-size: 11px;"></i>
+        </a>
+      </div>
+
+      <div class="app-card-grid-2" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+        <!-- Typing -->
+        <a href="#/activities/typing" style="text-decoration: none;">
+          <div class="card animate-slide-up" style="padding: 18px 20px; height: 100%; cursor: pointer; background: var(--surface-2); border-radius: 16px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+            <div style="height: 4px; border-radius: 9999px; background: var(--btn-bg); margin-bottom: 12px; opacity: 0.9;"></div>
+            <div class="label-sm" style="margin-bottom: 4px; color: var(--accent-bright);">Speed Lab</div>
+            <div style="font-size: 0.98rem; font-weight: 800; color: var(--text); line-height: 1.3;">Typing Velocity</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; line-height: 1.55; flex: 1;">
+              Track WPM, rhythm, accuracy, and fair-play signals in a clean competitive layout.
+            </div>
+          </div>
+        </a>
+
+        <!-- Math -->
+        <a href="#/activities/math" style="text-decoration: none;">
+          <div class="card animate-slide-up" style="padding: 18px 20px; height: 100%; cursor: pointer; background: var(--surface-2); border-radius: 16px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+            <div style="height: 4px; border-radius: 9999px; background: #f59e0b; margin-bottom: 12px; opacity: 0.9;"></div>
+            <div class="label-sm" style="margin-bottom: 4px; color: #fbbf24;">Quant Lab</div>
+            <div style="font-size: 0.98rem; font-weight: 800; color: var(--text); line-height: 1.3;">Math Clash</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; line-height: 1.55; flex: 1;">
+              Timed arithmetic drills with streak building, adaptive level ramps, and pressure handling.
+            </div>
+          </div>
+        </a>
+
+        <!-- Code -->
+        <a href="#/activities/code" style="text-decoration: none;">
+          <div class="card animate-slide-up" style="padding: 18px 20px; height: 100%; cursor: pointer; background: var(--surface-2); border-radius: 16px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+            <div style="height: 4px; border-radius: 9999px; background: #10b981; margin-bottom: 12px; opacity: 0.9;"></div>
+            <div class="label-sm" style="margin-bottom: 4px; color: #34d399;">Developer Track</div>
+            <div style="font-size: 0.98rem; font-weight: 800; color: var(--text); line-height: 1.3;">Code Arena</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; line-height: 1.55; flex: 1;">
+              Solve interview-style coding challenges, run test cases, and evaluate algorithms.
+            </div>
+          </div>
+        </a>
+
+        <!-- Guess -->
+        <a href="#/activities/guess" style="text-decoration: none;">
+          <div class="card animate-slide-up" style="padding: 18px 20px; height: 100%; cursor: pointer; background: var(--surface-2); border-radius: 16px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+            <div style="height: 4px; border-radius: 9999px; background: #ec4899; margin-bottom: 12px; opacity: 0.9;"></div>
+            <div class="label-sm" style="margin-bottom: 4px; color: #f472b6;">Logic Lab</div>
+            <div style="font-size: 0.98rem; font-weight: 800; color: var(--text); line-height: 1.3;">Guess Works</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; line-height: 1.55; flex: 1;">
+              Switch between number and word deduction to sharpen pattern recognition and memory.
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Leaderboard + Personal Bests -->
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <!-- Leaderboard -->
+      <div class="card" style="padding: 24px; display: flex; flex-direction: column;">
+        <div class="label-sm" style="margin-bottom: 4px;">Typing Leaderboard</div>
+        <div style="font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 14px;">
+          Shared competition layer
+        </div>
+        <div id="dashboardLeaderboardFeed" class="inner-scroll" style="display: flex; flex-direction: column; gap: 8px; max-height: 240px;">
+          <div style="font-size: 0.85rem; color: var(--text-muted); padding: 12px; text-align: center; border-radius: 10px; background: var(--surface-2);">
+            Complete a typing run to record your score on the live leaderboard.
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Run History -->
+      <div class="card" style="padding: 24px; display: flex; flex-direction: column;">
+        <div class="label-sm" style="margin-bottom: 4px;">Recent Session Logs</div>
+        <div style="font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 14px;">
+          Telemetry history
+        </div>
+        <div id="dashboardRecentFeed" class="inner-scroll" style="display: flex; flex-direction: column; gap: 8px; max-height: 240px;">
+          <div style="font-size: 0.85rem; color: var(--text-muted); padding: 12px; text-align: center; border-radius: 10px; background: var(--surface-2);">
+            No recent attempts logged. Jump into any arena to begin training.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{{end}}

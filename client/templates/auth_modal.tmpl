@@ -1,0 +1,56 @@
+{{define "auth_modal"}}
+<!-- Modal Overlay Backdrop -->
+<div id="authModalBackdrop" class="modal-backdrop" style="position: fixed; inset: 0; z-index: 999; background: rgba(0, 0, 0, 0.72); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: none; align-items: center; justify-content: center; padding: 20px;">
+
+  <!-- Modal Container -->
+  <div class="card login-card" style="width: 100%; max-width: 440px; padding: 32px 28px; position: relative;">
+    <!-- Close button -->
+    <button id="authModalCloseBtn" style="position: absolute; right: 16px; top: 16px; border: none; background: transparent; color: var(--text-faint); font-size: 1.1rem; cursor: pointer; padding: 4px;">
+      <i class="fas fa-times"></i>
+    </button>
+
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 24px;">
+      <img src="logo.png" alt="SkillNODE" style="width: 44px; height: 44px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px;">
+      <div class="display-title" style="font-size: 1.4rem; color: var(--text);">Operator Access</div>
+      <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">Sign in or start instantly with local-first guest identity.</div>
+    </div>
+
+    <!-- Mode Tabs (Sign In / Sign Up) -->
+    <div class="page-tabs" style="margin-bottom: 20px; border-radius: 10px;">
+      <button id="authTabSignIn" class="page-tab active">Sign In</button>
+      <button id="authTabSignUp" class="page-tab">Sign Up</button>
+    </div>
+
+    <!-- Form Fields -->
+    <form id="authForm" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 14px;">
+      <div id="signupNameField" style="display: none;">
+        <label class="label-sm" style="display: block; margin-bottom: 6px;">Display Name</label>
+        <input id="authInputName" type="text" class="field" placeholder="Liam Brooks" style="border-radius: 10px;">
+      </div>
+
+      <div>
+        <label class="label-sm" style="display: block; margin-bottom: 6px;">Username or Email</label>
+        <input id="authInputUsername" type="text" class="field" placeholder="operator_one" required style="border-radius: 10px;">
+      </div>
+
+      <div>
+        <label class="label-sm" style="display: block; margin-bottom: 6px;">Password</label>
+        <input id="authInputPassword" type="password" class="field" placeholder="••••••••••••" required style="border-radius: 10px;">
+      </div>
+
+      <button id="authSubmitBtn" type="submit" class="btn btn-primary" style="margin-top: 6px; width: 100%; border-radius: 12px; height: 44px;">
+        Continue
+      </button>
+
+      <div style="text-align: center; margin: 8px 0; font-size: 0.78rem; color: var(--text-faint);">— or —</div>
+
+      <button id="authGuestBtn" type="button" class="btn btn-secondary" style="width: 100%; border-radius: 12px; height: 44px; gap: 8px;">
+        <i class="fas fa-bolt" style="color: var(--accent-bright);"></i>
+        <span>Instant Guest Play (No Login)</span>
+      </button>
+    </form>
+  </div>
+
+</div>
+{{end}}

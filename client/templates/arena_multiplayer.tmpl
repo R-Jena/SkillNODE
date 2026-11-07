@@ -1,0 +1,131 @@
+{{define "arena_multiplayer"}}
+<div id="view-multiplayer" class="page-view flex-col-fill multiplayer-page" style="gap: 16px; padding-bottom: 48px; display: none;">
+
+  <!-- Hero Card -->
+  <div class="multiplayer-hero-card" style="padding: 26px 28px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+      <div>
+        <div class="multiplayer-hero-pill">
+          <span class="status-dot" style="width: 6px; height: 6px;"></span>
+          <span id="multiplayerSocketStatus">Realtime Lobby Ready</span>
+        </div>
+        <div class="display-title" style="font-size: 1.6rem; color: var(--text);">Battle Net: Real-Time Multiplayer</div>
+        <div style="font-size: 0.88rem; color: var(--text-muted); margin-top: 6px; max-width: 620px; line-height: 1.55;">
+          Create custom private battle rooms or join peer squads with instant room invite codes. Synchronize scores and presence with zero lag.
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div id="currentRoomChip" class="badge" style="font-size: 0.8rem; padding: 6px 14px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border);">
+          Room: <strong id="currentRoomName" style="color: var(--accent-bright); margin-left: 4px;">lobby</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Grid (Room Selector, Peers, Chat) -->
+  <div class="multiplayer-dashboard-grid">
+
+    <!-- Left (Col span 7): Presets and Join Form -->
+    <div class="card multiplayer-room-card" style="padding: 24px;">
+      <div class="label-sm" style="margin-bottom: 6px;">Select Preset Arena</div>
+      <div style="font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 14px;">
+        Room Directory
+      </div>
+
+      <!-- Presets 2x2 grid -->
+      <div class="multiplayer-presets">
+        <button class="multiplayer-signal-card" data-room-preset="lobby" style="text-align: left; cursor: pointer; border: 1px solid var(--border-hover);">
+          <div style="font-size: 0.88rem; font-weight: 700; color: var(--text);">Main Lobby</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">General hangout room for all active operators.</div>
+        </button>
+        <button class="multiplayer-signal-card" data-room-preset="typing-race" style="text-align: left; cursor: pointer;">
+          <div style="font-size: 0.88rem; font-weight: 700; color: var(--text);">Typing Race</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">Synchronized speed rounds and instant leaderboards.</div>
+        </button>
+        <button class="multiplayer-signal-card" data-room-preset="code-duel" style="text-align: left; cursor: pointer;">
+          <div style="font-size: 0.88rem; font-weight: 700; color: var(--text);">Code Duel</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">Pair programming battles and timed algorithm rounds.</div>
+        </button>
+        <button class="multiplayer-signal-card" data-room-preset="study-squad" style="text-align: left; cursor: pointer;">
+          <div style="font-size: 0.88rem; font-weight: 700; color: var(--text);">Study Squad</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">Shared room for quant drills, grammar, and reading.</div>
+        </button>
+      </div>
+
+      <!-- Join via Room Code Input -->
+      <div style="margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border-subtle);">
+        <div class="label-sm" style="margin-bottom: 8px;">Private Battle Code</div>
+        <div style="display: flex; gap: 8px;">
+          <input
+            id="multiplayerCodeInput"
+            type="text"
+            class="field"
+            placeholder="Enter 6-char Room Code (e.g. AB12CD)"
+            style="text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-weight: 700;"
+          />
+          <button id="multiplayerJoinCodeBtn" class="btn btn-primary btn-sm" style="height: 40px; padding: 0 18px;">
+            Join Room
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right (Col span 5): Peer Presence Members Card -->
+    <div class="card multiplayer-live-card" style="padding: 24px; display: flex; flex-direction: column;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+        <div>
+          <div class="label-sm">Active Peers</div>
+          <div style="font-size: 1.1rem; font-weight: 800; color: var(--text); margin-top: 2px;">
+            Room Presence
+          </div>
+        </div>
+        <span id="multiplayerMemberCountBadge" class="badge" style="background: rgba(34, 197, 94, 0.15); color: #4ade80;">
+          1 Online
+        </span>
+      </div>
+
+      <div id="multiplayerMemberList" class="inner-scroll" style="display: flex; flex-direction: column; gap: 8px; flex: 1; max-height: 280px;">
+        <div class="multiplayer-member-row">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center;">
+              O
+            </div>
+            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text);">You (Operator)</span>
+          </div>
+          <span class="multiplayer-member-chip">Ready</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom (Col span 12): Live Room Chat Feed -->
+    <div class="card" style="grid-column: span 12; padding: 24px; display: flex; flex-direction: column; gap: 14px;">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div class="label-sm">Squad Communications</div>
+        <span style="font-size: 0.75rem; color: var(--text-faint);">Encrypted peer stream</span>
+      </div>
+
+      <div id="multiplayerChatFeed" class="multiplayer-chat-feed inner-scroll" style="padding: 14px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--border-subtle); overflow-y: auto;">
+        <div class="multiplayer-message">
+          <div style="font-size: 0.75rem; color: var(--text-faint); margin-bottom: 2px;">System • Automated Dispatch</div>
+          <div style="font-size: 0.85rem; color: var(--text);">Welcome to the SkillNODE realtime operations deck. Messages sent here reach all peers in your room.</div>
+        </div>
+      </div>
+
+      <div class="multiplayer-chat-form">
+        <input
+          id="multiplayerChatInput"
+          type="text"
+          class="field"
+          placeholder="Type message to room..."
+          style="border-radius: 9999px; padding: 0 18px;"
+        />
+        <button id="multiplayerSendChatBtn" class="btn btn-primary btn-sm" style="border-radius: 9999px; height: 40px; padding: 0 20px;">
+          <i class="fas fa-paper-plane"></i> Send
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{{end}}

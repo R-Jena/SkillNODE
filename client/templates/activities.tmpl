@@ -1,0 +1,128 @@
+{{define "activities"}}
+<div id="view-activities" class="page-view flex-col-fill" style="gap: 24px; padding-bottom: 48px; display: none;">
+
+  <!-- Header Section -->
+  <div class="card" style="padding: 28px 32px; background: linear-gradient(135deg, var(--surface), var(--surface-2));">
+    <span class="flutter-pill-tag" style="margin-bottom: 8px;">Cognitive & Technical Disciplines</span>
+    <div class="display-title" style="font-size: 1.6rem; color: var(--text); margin-top: 6px;">
+      Skill Training Labs
+    </div>
+    <div style="font-size: 0.92rem; color: var(--text-muted); margin-top: 6px; max-width: 680px; line-height: 1.6;">
+      Choose a discipline to start an assessment session. Telemetry records cadence, accuracy, errors, and integrity metrics in real time.
+    </div>
+  </div>
+
+  <!-- 6 Disciplines Grid -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px;">
+
+    <!-- 1. Typing Velocity -->
+    <a href="#/activities/typing" style="text-decoration: none;">
+      <div class="card" style="padding: 24px; height: 100%; display: flex; flex-direction: column; cursor: pointer;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">SPEED LAB</span>
+          <span style="font-size: 0.75rem; color: var(--text-faint); font-weight: 600;">2-5 min rounds</span>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--text);">Typing Velocity</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.55; flex: 1;">
+          Track live WPM, cadence smoothness, keystroke accuracy, and fair-play blur signals in a competitive arena.
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+          <span style="font-size: 0.78rem; font-weight: 700; color: var(--accent);">Race ready</span>
+          <span class="btn btn-primary btn-sm" style="height: 32px; font-size: 0.78rem; border-radius: 9999px;">Enter Lab →</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 2. Math Clash -->
+    <a href="#/activities/math" style="text-decoration: none;">
+      <div class="card" style="padding: 24px; height: 100%; display: flex; flex-direction: column; cursor: pointer;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">QUANT LAB</span>
+          <span style="font-size: 0.75rem; color: var(--text-faint); font-weight: 600;">45 sec sprint</span>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--text);">Math Clash</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.55; flex: 1;">
+          Rapid mental math calculations with streak multipliers, adaptive difficulty, and time pressure handling.
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+          <span style="font-size: 0.78rem; font-weight: 700; color: #fbbf24;">Duel ready</span>
+          <span class="btn btn-secondary btn-sm" style="height: 32px; font-size: 0.78rem; border-radius: 9999px;">Enter Lab →</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 3. Code Arena -->
+    <a href="#/activities/code" style="text-decoration: none;">
+      <div class="card" style="padding: 24px; height: 100%; display: flex; flex-direction: column; cursor: pointer;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">DEVELOPER TRACK</span>
+          <span style="font-size: 0.75rem; color: var(--text-faint); font-weight: 600;">5-20 min challenges</span>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--text);">Code Arena</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.55; flex: 1;">
+          Solve algorithmic challenges in JavaScript, Python, C++, TypeScript, or SQL with instant automated test validation.
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+          <span style="font-size: 0.78rem; font-weight: 700; color: #34d399;">Contest board</span>
+          <span class="btn btn-secondary btn-sm" style="height: 32px; font-size: 0.78rem; border-radius: 9999px;">Enter Lab →</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 4. Guess Works -->
+    <a href="#/activities/guess" style="text-decoration: none;">
+      <div class="card" style="padding: 24px; height: 100%; display: flex; flex-direction: column; cursor: pointer;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <span class="badge" style="background: rgba(236, 72, 153, 0.15); color: #f472b6;">LOGIC LAB</span>
+          <span style="font-size: 0.75rem; color: var(--text-faint); font-weight: 600;">Quick rounds</span>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--text);">Guess Works</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.55; flex: 1;">
+          High-entropy number and word guessing games designed to sharpen intuition and binary search patterning.
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+          <span style="font-size: 0.78rem; font-weight: 700; color: #f472b6;">Party mode</span>
+          <span class="btn btn-secondary btn-sm" style="height: 32px; font-size: 0.78rem; border-radius: 9999px;">Enter Lab →</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 5. Grammar Edge -->
+    <a href="#/activities/grammar" style="text-decoration: none;">
+      <div class="card" style="padding: 24px; height: 100%; display: flex; flex-direction: column; cursor: pointer;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">LANGUAGE LAB</span>
+          <span style="font-size: 0.75rem; color: var(--text-faint); font-weight: 600;">6 question sets</span>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--text);">Grammar Edge</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.55; flex: 1;">
+          Sharpen precision, tone discernment, and grammatical mastery under strict timing constraints.
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+          <span style="font-size: 0.78rem; font-weight: 700; color: #c084fc;">League ready</span>
+          <span class="btn btn-secondary btn-sm" style="height: 32px; font-size: 0.78rem; border-radius: 9999px;">Enter Lab →</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 6. Reading Intel -->
+    <a href="#/activities/comprehension" style="text-decoration: none;">
+      <div class="card" style="padding: 24px; height: 100%; display: flex; flex-direction: column; cursor: pointer;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <span class="badge" style="background: rgba(132, 204, 22, 0.15); color: #a3e635;">COMPREHENSION LAB</span>
+          <span style="font-size: 0.75rem; color: var(--text-faint); font-weight: 600;">1 passage sets</span>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--text);">Reading Intel</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.55; flex: 1;">
+          Read passages rapidly, extract core architectural structures, and solve inference-based comprehension puzzles.
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+          <span style="font-size: 0.78rem; font-weight: 700; color: #a3e635;">Squad review</span>
+          <span class="btn btn-secondary btn-sm" style="height: 32px; font-size: 0.78rem; border-radius: 9999px;">Enter Lab →</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</div>
+{{end}}

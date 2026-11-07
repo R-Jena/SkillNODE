@@ -1,0 +1,100 @@
+{{define "arena_code"}}
+<div id="view-activity-code" class="page-view flex-col-fill" style="gap: 20px; padding-bottom: 48px; display: none;">
+
+  <!-- Hero Header -->
+  <div class="card" style="padding: 24px 28px; background: linear-gradient(135deg, var(--surface), var(--surface-2)); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">DEVELOPER TRACK</span>
+        <span style="font-size: 0.72rem; font-weight: 700; color: var(--accent-bright); background: var(--accent-dim); border: 1px solid var(--border); padding: 2px 8px; border-radius: 999px;">
+          Multi-Language
+        </span>
+      </div>
+      <div class="display-title" style="font-size: 1.45rem; color: var(--text);">Algorithmic Code Arena</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <button id="codeRunBtn" class="btn btn-primary btn-sm" style="border-radius: 9999px; gap: 6px;">
+        <i class="fas fa-play"></i> Run Tests
+      </button>
+      <a href="#/activities" class="btn btn-ghost btn-sm" style="border-radius: 9999px;">Exit</a>
+    </div>
+  </div>
+
+  <!-- Language Selection Tabs -->
+  <div class="page-tabs" style="border-radius: 12px; padding: 6px;">
+    <button class="page-tab active" data-lang="javascript">JavaScript</button>
+    <button class="page-tab" data-lang="python">Python</button>
+    <button class="page-tab" data-lang="cpp">C++</button>
+    <button class="page-tab" data-lang="typescript">TypeScript</button>
+    <button class="page-tab" data-lang="sql">SQL</button>
+  </div>
+
+  <!-- Challenge Selection Sub-tabs -->
+  <div id="codeChallengeTabs" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+    <!-- Populated dynamically via Go WASM -->
+  </div>
+
+  <!-- Main Code Arena Grid (Split: Problem Spec & Editor) -->
+  <div style="display: grid; grid-template-columns: minmax(300px, 1fr) minmax(380px, 1.4fr); gap: 18px; align-items: stretch;">
+
+    <!-- Left: Problem Spec -->
+    <div class="card" style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+      <div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span id="challengeDifficulty" class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">Medium</span>
+          <span id="challengeTrackLabel" style="font-size: 0.75rem; color: var(--text-faint);">Local execution</span>
+        </div>
+        <div id="challengeTitle" style="font-size: 1.25rem; font-weight: 800; color: var(--text); margin-top: 8px;">
+          Merge Busy Intervals
+        </div>
+        <div id="challengeDescription" style="font-size: 0.88rem; color: var(--text-muted); margin-top: 8px; line-height: 1.6;">
+          Merge overlapping booking intervals and return them in sorted order.
+        </div>
+      </div>
+
+      <div>
+        <div class="label-sm" style="margin-bottom: 6px;">Constraints & Targets</div>
+        <ul id="challengeConstraints" style="margin: 0; padding-left: 20px; font-size: 0.82rem; color: var(--text-faint); line-height: 1.7;">
+          <li>Sort before merging.</li>
+          <li>Target time complexity: O(n log n).</li>
+        </ul>
+      </div>
+
+      <!-- Test Cases & Checklist Result Feed -->
+      <div style="margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+        <div class="label-sm" style="margin-bottom: 8px;">Automated Test Results</div>
+        <div id="codeTestResultsFeed" style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;">
+          <div style="font-size: 0.8rem; color: var(--text-faint); padding: 10px; background: var(--surface-2); border-radius: 8px; text-align: center;">
+            Click 'Run Tests' to validate your solution against sample assertions.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Code Editor -->
+    <div class="code-editor-wrap" style="min-height: 480px;">
+      <div class="code-editor-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-code" style="color: var(--accent); font-size: 13px;"></i>
+          <span id="editorLanguageLabel" style="font-size: 0.78rem; font-weight: 700; color: var(--text);">solution.js</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button id="codeResetStarterBtn" class="btn btn-ghost btn-sm" style="height: 26px; padding: 0 8px; font-size: 0.72rem;">
+            Reset Starter
+          </button>
+        </div>
+      </div>
+      <div class="code-editor-body">
+        <textarea
+          id="codeEditorTextarea"
+          class="code-editor-textarea"
+          spellcheck="false"
+          placeholder="// Write your code here..."
+        ></textarea>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{{end}}
