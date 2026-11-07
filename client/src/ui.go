@@ -146,10 +146,12 @@ func SwitchView(route string) {
 		targetViewID = "view-activity-code"
 		viewTitle = "Developer Track: Code Arena"
 		navKey = "activities"
+		initCodingView()
 	case strings.HasPrefix(route, "activities/math"):
 		targetViewID = "view-activity-math"
 		viewTitle = "Quant Lab: Math Clash"
 		navKey = "activities"
+		initMathView()
 	case strings.HasPrefix(route, "multiplayer"):
 		targetViewID = "view-multiplayer"
 		viewTitle = "Battle Net: Real-Time Multiplayer"
@@ -343,5 +345,4 @@ func setElementText(doc js.Value, id, text string) {
 	}
 }
 
-// Temporary stub until Phase 4 typing engine connects
-func initTypingView() {}
+
