@@ -1,32 +1,108 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark-purple">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#07070f" />
-    <meta name="description" content="SkillNODE — Train hard. Look sharp. The premium skill platform for typing, coding, math, grammar, and multiplayer competition." />
-    <link rel="icon" type="image/svg+xml" href="/logo.png" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <title>SkillNODE — Professional Skill & Code Arena</title>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="SkillNODE — Train hard. Look sharp. The premium skill platform for typing, coding, math, grammar, and multiplayer competition.">
+    <meta name="theme-color" content="#07070f">
+    <title>SkillNODE — Professional Skill &amp; Code Arena</title>
+    <link rel="icon" type="image/png" href="logo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="styles.css?v=1.0.0">
+
     <script>
-      // Apply stored theme before first paint to avoid flash
+      
       try {
         const t = localStorage.getItem("skillnode-theme");
-        if (t === "light-blue") {
+        if (t === "light-blue" || t === "light") {
           document.documentElement.setAttribute("data-theme", "light-white");
         } else if (t) {
           document.documentElement.setAttribute("data-theme", t);
         } else {
           document.documentElement.setAttribute("data-theme", "dark-purple");
         }
-      } catch {}
+      } catch (e) {}
     </script>
-  </head>
-  <body class="bg-slate-950 text-slate-100">
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+</head>
+
+<body class="bg-slate-950 text-slate-100">
+
+    <div id="loadingScreen" class="loading-screen" style="position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: var(--bg); transition: opacity 0.3s ease, visibility 0.3s ease;">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 32px 40px; border-radius: 24px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--card-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); text-align: center; max-width: 90vw;">
+            <div style="position: relative; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;">
+                <img src="logo.png" alt="SkillNODE logo" style="width: 36px; height: 36px; border-radius: 10px; object-fit: contain;">
+                <div style="position: absolute; inset: 0; border: 3px solid var(--border-subtle); border-top-color: var(--accent); border-radius: 50%; animation: spin-slow 1.2s linear infinite;"></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text);">SkillNODE</span>
+                <span id="loadingStatusText" style="font-size: 0.82rem; color: var(--text-muted); font-weight: 500;">Initializing Go WebAssembly Engine...</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="root" class="app-shell" style="min-height: 100vh; display: flex; flex-direction: column;">
+        <div id="appContainer" style="flex: 1; display: flex; flex-direction: column;">
+            
+        </div>
+    </div>
+
+    <script src="wasm/wasm_exec.js?v=1.0.0"></script>
+    <script>
+        (function() {
+            const go = new Go();
+            const wasmUrl = "wasm/app.wasm?v=1.0.0";
+
+            function finishLoading() {
+                const loader = document.getElementById("loadingScreen");
+                if (loader) {
+                    loader.style.opacity = "0";
+                    setTimeout(() => {
+                        loader.style.display = "none";
+                        loader.style.visibility = "hidden";
+                    }, 300);
+                }
+            }
+
+            if (WebAssembly.instantiateStreaming) {
+                WebAssembly.instantiateStreaming(fetch(wasmUrl), go.importObject)
+                    .then((result) => {
+                        go.run(result.instance);
+                        finishLoading();
+                    })
+                    .catch((err) => fallbackLoad(wasmUrl, go));
+            } else {
+                fallbackLoad(wasmUrl, go);
+            }
+
+            function fallbackLoad(url, goInstance) {
+                fetch(url)
+                    .then(resp => {
+                        if (!resp.ok) throw new Error("Network response not ok: " + resp.status);
+                        return resp.arrayBuffer();
+                    })
+                    .then(bytes => WebAssembly.instantiate(bytes, goInstance.importObject))
+                    .then(result => {
+                        goInstance.run(result.instance);
+                        finishLoading();
+                    })
+                    .catch(err => {
+                        console.error("Failed to load SkillNODE Go WebAssembly:", err);
+                        const status = document.getElementById("loadingStatusText");
+                        if (status) {
+                            status.style.color = "#ef4444";
+                            status.innerText = "Error loading WebAssembly engine. Please refresh.";
+                        }
+                    });
+            }
+        })();
+    </script>
+
+</body>
 </html>

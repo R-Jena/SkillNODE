@@ -1,0 +1,16 @@
+{{define "layout"}}<!DOCTYPE html>
+<html lang="en" data-theme="dark-purple">
+{{template "head" .}}
+<body class="bg-slate-950 text-slate-100">
+{{template "loading" .}}
+
+    <div id="root" class="app-shell" style="min-height: 100vh; display: flex; flex-direction: column;">
+        <div id="appContainer" style="flex: 1; display: flex; flex-direction: column;">
+            <!-- Content will be mounted here in Phase 2 -->
+        </div>
+    </div>
+
+{{template "scripts" .}}
+</body>
+</html>
+{{end}}

@@ -7,8 +7,9 @@
     "node": "22.x"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "go run build.go -serve",
+    "serve": "go run build.go -serve",
+    "build": "go run build.go",
     "preview": "vite preview",
     "test": "echo \"No tests yet\" && exit 0"
   },

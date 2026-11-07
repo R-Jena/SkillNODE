@@ -1,0 +1,53 @@
+{{define "scripts"}}
+    <!-- Go WebAssembly Runtime & Loader -->
+    <script src="wasm/wasm_exec.js?v={{.Version}}"></script>
+    <script>
+        (function() {
+            const go = new Go();
+            const wasmUrl = "wasm/app.wasm?v={{.Version}}";
+
+            function finishLoading() {
+                const loader = document.getElementById("loadingScreen");
+                if (loader) {
+                    loader.style.opacity = "0";
+                    setTimeout(() => {
+                        loader.style.display = "none";
+                        loader.style.visibility = "hidden";
+                    }, 300);
+                }
+            }
+
+            if (WebAssembly.instantiateStreaming) {
+                WebAssembly.instantiateStreaming(fetch(wasmUrl), go.importObject)
+                    .then((result) => {
+                        go.run(result.instance);
+                        finishLoading();
+                    })
+                    .catch((err) => fallbackLoad(wasmUrl, go));
+            } else {
+                fallbackLoad(wasmUrl, go);
+            }
+
+            function fallbackLoad(url, goInstance) {
+                fetch(url)
+                    .then(resp => {
+                        if (!resp.ok) throw new Error("Network response not ok: " + resp.status);
+                        return resp.arrayBuffer();
+                    })
+                    .then(bytes => WebAssembly.instantiate(bytes, goInstance.importObject))
+                    .then(result => {
+                        goInstance.run(result.instance);
+                        finishLoading();
+                    })
+                    .catch(err => {
+                        console.error("Failed to load SkillNODE Go WebAssembly:", err);
+                        const status = document.getElementById("loadingStatusText");
+                        if (status) {
+                            status.style.color = "#ef4444";
+                            status.innerText = "Error loading WebAssembly engine. Please refresh.";
+                        }
+                    });
+            }
+        })();
+    </script>
+{{end}}
