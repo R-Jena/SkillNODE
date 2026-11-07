@@ -4,7 +4,7 @@
 
 .PHONY: help install setup dev dev-client dev-server build build-client build-server \
         db-up db-down db-logs db-generate db-push db-studio \
-        lint test audit ci clean clean-all
+        lint test audit ci clean clean-all rebase push
 
 # Default target when running `make`
 .DEFAULT_GOAL := help
@@ -42,6 +42,10 @@ help:
 	@echo "  make lint           - Run ESLint checks"
 	@echo "  make audit          - Run npm security vulnerability audit"
 	@echo "  make ci             - Run complete local CI check (build + audit)"
+	@echo ""
+	@echo "Git & Automation:"
+	@echo "  make rebase         - Safe git pull --rebase on origin/main"
+	@echo "  make push msg=\"...\" - Auto rebase, stage all changes, commit, and push"
 	@echo ""
 	@echo "Cleanup:"
 	@echo "  make clean          - Remove build artifacts and caches"
@@ -127,3 +131,28 @@ clean-all: clean
 	@if exist client\node_modules rmdir /s /q client\node_modules
 	@if exist server\node_modules rmdir /s /q server\node_modules
 	@echo "Done."
+
+# ------------------------------------------------------------------------------
+# GIT & AUTOMATION WORKFLOWS
+# ------------------------------------------------------------------------------
+MSG ?= $(msg)
+ifeq ($(MSG),)
+  MSG := $(m)
+endif
+
+rebase:
+	@echo "==> Pulling and rebasing on origin/main (with autostash)..."
+	git pull --rebase --autostash origin main
+
+push:
+ifeq ($(strip $(MSG)),)
+	@echo "Error: Commit message required. Usage: make push msg=\"your message\" or make push m=\"your message\""
+	@exit 1
+else
+	@echo "==> Executing automated safe rebase, stage, commit and push..."
+	git pull --rebase --autostash origin main
+	git add -A
+	git commit -m "$(MSG)"
+	git push origin HEAD
+endif
+
