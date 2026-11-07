@@ -91,6 +91,9 @@ func syncDist() {
 	copyFile("styles.css", filepath.Join(distDir, "styles.css"))
 	copyFile(filepath.Join("wasm", "app.wasm"), filepath.Join(distDir, "wasm", "app.wasm"))
 	copyFile(filepath.Join("wasm", "wasm_exec.js"), filepath.Join(distDir, "wasm", "wasm_exec.js"))
+	if err := os.MkdirAll(filepath.Join(distDir, "static"), 0755); err == nil {
+		copyFile(filepath.Join("static", "bridge.js"), filepath.Join(distDir, "static", "bridge.js"))
+	}
 
 	if _, err := os.Stat("logo.png"); err == nil {
 		copyFile("logo.png", filepath.Join(distDir, "logo.png"))

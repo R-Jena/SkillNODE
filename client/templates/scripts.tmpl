@@ -1,4 +1,7 @@
 {{define "scripts"}}
+    <!-- Tiny Vanilla JS Bridge (Zero Dependencies, Zero node_modules) -->
+    <script src="static/bridge.js?v={{.Version}}"></script>
+
     <!-- Go WebAssembly Runtime & Loader -->
     <script src="wasm/wasm_exec.js?v={{.Version}}"></script>
     <script>
