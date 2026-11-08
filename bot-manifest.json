@@ -14,10 +14,10 @@
     ]
   },
   "ledger": {
-    "last_commit_sha": "32205bdc7e721022560ff9148f6daa7bdbde44d8",
-    "last_commit_message": "chore: clean dead legacy files, restore logos, enforce SkillNODE title, and update architecture README",
+    "last_commit_sha": "20b937824d98b838d4eed9c33948c3bd6231a21a",
+    "last_commit_message": "chore: purge dead server code, configure Go CI, and align README to Go WASM core",
     "last_commit_author": "liambrooks-lab",
-    "last_updated_utc": "2026-11-08T04:53:02Z",
+    "last_updated_utc": "2026-11-08T05:02:12Z",
     "build_status": "verified",
     "system_architecture": {
       "frontend_pipeline": "Dynamic Go Templates (.tmpl)",
