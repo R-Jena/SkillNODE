@@ -14,10 +14,10 @@
     ]
   },
   "ledger": {
-    "last_commit_sha": "cd183c50c5083a08d3b499689147f4d028101d5e",
-    "last_commit_message": "feat(multiplayer): implement Phase 5 realtime Socket.IO and Render API sync",
+    "last_commit_sha": "fb1b582d92a1be6844b7c019fbd44846c8e5a563",
+    "last_commit_message": "chore: complete Phase 6 zero-node cleanup and full Go WASM migration",
     "last_commit_author": "liambrooks-lab",
-    "last_updated_utc": "2026-11-08T04:24:21Z",
+    "last_updated_utc": "2026-11-08T04:28:38Z",
     "build_status": "verified",
     "system_architecture": {
       "frontend_pipeline": "Dynamic Go Templates (.tmpl)",
