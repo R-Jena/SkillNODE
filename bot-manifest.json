@@ -14,10 +14,10 @@
     ]
   },
   "ledger": {
-    "last_commit_sha": "fb1b582d92a1be6844b7c019fbd44846c8e5a563",
-    "last_commit_message": "chore: complete Phase 6 zero-node cleanup and full Go WASM migration",
+    "last_commit_sha": "7f850544a9871c32e2d84d754f79e4e50aeabbb4",
+    "last_commit_message": "feat(security): implement HMAC-SHA256 storage vault, zero-trust role lockdown, and anti-tamper client sandbox",
     "last_commit_author": "liambrooks-lab",
-    "last_updated_utc": "2026-11-08T04:28:38Z",
+    "last_updated_utc": "2026-11-08T04:41:44Z",
     "build_status": "verified",
     "system_architecture": {
       "frontend_pipeline": "Dynamic Go Templates (.tmpl)",
