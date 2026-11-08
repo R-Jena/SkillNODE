@@ -261,6 +261,20 @@ func renderProfileInfo() {
 	setElementText(doc, "profileBioDisplay", p.Bio)
 	setElementText(doc, "profileSessionId", p.ID)
 	setElementText(doc, "profileRegion", p.Region)
+	setElementText(doc, "profileRoleDisplay", strings.ToUpper(p.Role)+" (LOCAL SANDBOX)")
+
+	badgeEl := doc.Call("getElementById", "profileBadgeDisplay")
+	if !badgeEl.IsNull() {
+		if p.IsVerified {
+			badgeEl.Set("innerHTML", `<i class="fas fa-check-circle"></i> VERIFIED OPERATOR`)
+			badgeEl.Get("style").Set("background", "rgba(16, 185, 129, 0.15)")
+			badgeEl.Get("style").Set("color", "#34d399")
+		} else {
+			badgeEl.Set("innerHTML", `<i class="fas fa-shield-alt"></i> GUEST OPERATOR`)
+			badgeEl.Get("style").Set("background", "rgba(147, 51, 234, 0.15)")
+			badgeEl.Get("style").Set("color", "var(--accent-bright)")
+		}
+	}
 
 	profileRing := doc.Call("getElementById", "profileAvatarRing")
 	if !profileRing.IsNull() && len(p.Name) > 0 {

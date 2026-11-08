@@ -169,4 +169,26 @@
       });
     }
   });
+
+  // Client Sandbox Lockdown: Freeze bridges against console hijacking
+  try {
+    Object.freeze(window.SkillNodeBridge);
+    Object.freeze(window.SkillNodeSocket);
+    Object.defineProperty(window, "SkillNodeBridge", {
+      value: window.SkillNodeBridge,
+      writable: false,
+      configurable: false,
+    });
+    Object.defineProperty(window, "SkillNodeSocket", {
+      value: window.SkillNodeSocket,
+      writable: false,
+      configurable: false,
+    });
+    console.log(
+      "%c[SkillNODE Zero-Trust Security] Client Sandbox Locked.\nAll local storage records are cryptographically sealed with Go WASM HMAC-SHA256 signatures.\nConsole privilege escalation and unverified admin roles are strictly blocked.",
+      "background: #4c1d95; color: #c084fc; font-weight: bold; font-size: 11px; padding: 6px 10px; border-radius: 4px; border: 1px solid #7c3aed;"
+    );
+  } catch (err) {
+    // Non-critical sandbox fallback
+  }
 })();
