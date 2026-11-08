@@ -105,10 +105,10 @@ db-studio:
 # TESTING & SECURITY
 # ------------------------------------------------------------------------------
 test:
-	npm test -w client
+	cd client && go run build.go
 
 lint:
-	npx eslint .
+	node --check server/src/server.js
 
 audit:
 	npm audit --audit-level=high

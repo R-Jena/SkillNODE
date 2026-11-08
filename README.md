@@ -1,16 +1,16 @@
 <p align="center">
-  <img src="client/public/logo.png" alt="SkillNODE logo" width="130" />
+  <img src="assets/logo.png" alt="SkillNODE logo" width="130" />
 </p>
 
 # <p align="center">SkillNODE</p>
 <p align="center">
-  A local-first skill training platform with structured practice tracks, real-time multiplayer, AI-assisted coaching, and professional identity management.
+  A high-throughput skill training and evaluation platform built on a Go WebAssembly client architecture with a decoupled Node.js real-time backend.
 </p>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/go-1.22+-00ADD8?logo=go&logoColor=white" alt="Go" />
+  <img src="https://img.shields.io/badge/webassembly-WASM-654FF0?logo=webassembly&logoColor=white" alt="WebAssembly" />
   <img src="https://img.shields.io/badge/node-22.x-339933?logo=node.js&logoColor=white" alt="Node" />
-  <img src="https://img.shields.io/badge/react-19-61DAFB?logo=react&logoColor=black" alt="React" />
-  <img src="https://img.shields.io/badge/vite-7-646CFF?logo=vite&logoColor=white" alt="Vite" />
   <img src="https://img.shields.io/badge/express-4-000000?logo=express&logoColor=white" alt="Express" />
   <img src="https://img.shields.io/badge/prisma-6-2D3748?logo=prisma&logoColor=white" alt="Prisma" />
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL" />
@@ -19,37 +19,110 @@
 </p>
 
 <p align="center">
-  <a href="https://skillnode-azure.vercel.app/login"><strong>Live Application</strong></a>
+  <a href="https://skillnode-azure.vercel.app"><strong>Live Application</strong></a>
   &nbsp;|&nbsp;
   <a href="https://skillnode-api.onrender.com/healthz"><strong>API Health Status</strong></a>
 </p>
 
 ---
 
-## Overview
+## System Overview
 
-SkillNODE is a full-stack monorepo web application for structured cognitive and technical skill training. It consolidates multi-domain practice environments, persistent user identity, challenge-based execution, AI coaching, fair-play monitoring, and real-time multiplayer into a single cohesive platform.
+SkillNODE is a dual-runtime monorepo engineered for low-latency cognitive and technical execution training. The client runtime runs on a compiled Go WebAssembly engine rendered through Go HTML templates, eliminating client-side JavaScript bundle overhead and node_modules dependencies. Data integrity and role assignments are cryptographically enforced in the browser through an HMAC-SHA256 vault.
 
-The monorepo is partitioned into two workspaces:
+The monorepo is partitioned into two independent workspaces:
 
-| Workspace | Stack | Responsibility |
-|-----------|-------|----------------|
-| `client/` | React 19 + Vite 7 + Tailwind CSS | SPA frontend — dashboard, skill tracks, profile, multiplayer UI |
-| `server/` | Express 4 + Prisma + Socket.IO | REST API, AI endpoints, WebSocket presence, auth |
+| Workspace | Runtime / Architecture | Core Responsibility |
+|---|---|---|
+| `client/` | Go 1.22 + Go Templates (`.tmpl`) + WebAssembly (`app.wasm`) | Zero-dependency client runtime, static site generation, SPA navigation, 6 training engines, local HMAC-SHA256 vault |
+| `server/` | Node.js 22 + Express 4 + Prisma 6 + Socket.IO 4 | REST API, PostgreSQL persistence, AI coaching bridge, real-time WebSocket room coordination, telemetry ingestion |
 
 ---
 
-## Features
+## Core Capabilities
 
-- **Dashboard** — Command-center layout with telemetry aggregation, session logs, and leaderboard surfaces.
-- **Skill Tracks** — Typing, advanced mathematics (grade 11–12), data estimation, multi-language coding arena, grammar, and reading comprehension.
-- **Coding Arena** — Challenge tracks for JavaScript, Python, C++, Java, TypeScript, and SQL.
-- **AI Coaching** — Contextual algorithmic hints powered by OpenAI, integrated into supported challenge surfaces.
-- **Real-time Multiplayer** — Preset rooms, custom room creation, and live peer presence via Socket.IO.
-- **Player Identity** — Profile studio with avatar, biography, region, social links, and public shareable profile cards.
-- **Fair-play Monitoring** — Integrity alerts and anomaly logging within the telemetry layer.
-- **Instant Start** — Begin practicing right away with browser-side sessions. No login needed.
-- **Responsive Design** — Fully responsive layouts for desktop and mobile viewports.
+- **Typing Velocity Engine** — Real-time character differential rendering, 120ms cadence sampling, WPM calculation, error tracking, and window blur fair-play detection.
+- **Quant Sprint (Math Clash)** — 45-second high-pressure arithmetic and quantitative reasoning challenges with streak multipliers.
+- **Algorithmic Code Arena** — Multi-language problem sets (JavaScript, Python, C++, TypeScript, SQL) with in-browser JavaScript evaluation sandbox and automated test assertion checklists.
+- **Battle Net Multiplayer** — Room preset switching, private room code matching, peer presence broadcasting, and synchronized messaging via Socket.IO.
+- **Cryptographic Storage Vault** — In-memory HMAC-SHA256 signed storage envelopes with device telemetry entropy to prevent local tampering and client-side privilege escalation.
+- **Operator Profile Studio** — Local-first player identity with cryptographic role verification, discipline radar, and shareable performance records.
+
+---
+
+## Technical Architecture
+
+```
+SkillNODE/
+├── client/
+│   ├── src/                    # Go WebAssembly core (compiled to wasm/app.wasm)
+│   │   ├── api.go              # Asynchronous backend syncing & health monitor
+│   │   ├── coding.go           # Algorithmic challenge evaluation engine
+│   │   ├── drills.go           # Math Clash quant sprint (45s ticker)
+│   │   ├── main.go             # WASM entrypoint and subsystem bootstrap
+│   │   ├── multiplayer.go      # Battle Net room coordination & presence
+│   │   ├── store.go            # HMAC-SHA256 encrypted local vault & zero-trust role guards
+│   │   ├── typing.go           # High-precision typing cadence & diff engine
+│   │   └── ui.go               # SPA routing, theme coordinator, dynamic DOM bindings
+│   ├── templates/              # Go html/template source files
+│   │   ├── head.tmpl           # Metadata, fonts, and favicon configuration
+│   │   ├── styles.tmpl         # Purged monolithic CSS stylesheet (40.8 KB)
+│   │   ├── layout.tmpl         # Base viewport frame and shell wrappers
+│   │   ├── app_header.tmpl     # Telemetry status bar and quick action triggers
+│   │   ├── app_sidebar.tmpl    # Navigation, theme toggle, and operator status
+│   │   ├── dashboard.tmpl      # Performance metrics and session history feed
+│   │   ├── activities.tmpl     # Training track registry
+│   │   ├── arena_typing.tmpl   # Typing velocity execution surface
+│   │   ├── arena_math.tmpl     # Quantitative sprint surface
+│   │   ├── arena_code.tmpl     # Multi-language algorithmic workspace
+│   │   ├── arena_multiplayer.tmpl # Real-time Battle Net lobby and live chat
+│   │   ├── profile.tmpl        # Operator credentials studio
+│   │   ├── auth_modal.tmpl     # Session initialization modal
+│   │   ├── app_toast.tmpl      # Glassmorphic notification container
+│   │   ├── loading.tmpl        # Startup spinner and WebAssembly loader
+│   │   ├── scripts.tmpl        # Bootstrap orchestration script
+│   │   └── wasm_exec.tmpl      # Go runtime WebAssembly bridge
+│   ├── static/
+│   │   └── bridge.js           # Frozen DOM & Socket.IO client interface (5.6 KB)
+│   ├── build.go                # Sub-second Go SSG compiler & development server
+│   ├── go.mod                  # Go module definition (go 1.22)
+│   ├── package.json            # Client build script mappings (0 dependencies)
+│   ├── vercel.json             # Vercel deployment rewrites
+│   └── logo.png                # Client logo asset
+├── server/
+│   ├── prisma/
+│   │   └── schema.prisma       # Database schema and relational models
+│   ├── src/
+│   │   ├── ai/                 # OpenAI coaching engine interface
+│   │   ├── auth/               # JWT token generation and validation
+│   │   ├── controllers/        # Request handling and domain logic
+│   │   ├── db/                 # Prisma client instance
+│   │   ├── email/              # Transactional email dispatcher (Resend)
+│   │   ├── middleware/         # CORS, Helmet, and auth guards
+│   │   ├── models/             # Domain schemas and data structures
+│   │   ├── realtime/           # Socket.IO room lifecycle and peer events
+│   │   ├── routes/             # REST routing tables
+│   │   ├── services/           # Background email triggers and AI services
+│   │   ├── storage/            # Local static upload handling
+│   │   ├── env.js              # Strict environment variable validation
+│   │   └── server.js           # HTTP + WebSocket server initialization
+│   ├── package.json            # Server dependencies and lifecycle scripts
+│   └── package-lock.json       # Deterministic server dependency lockfile
+├── assets/                     # Shared branding assets (logo.png)
+├── docs/
+│   └── readme/                 # Technical interface documentation captures
+├── .github/
+│   └── workflows/
+│       └── bot-manifest.yml    # Cryptographic commit audit ledger action
+├── bot-manifest.json           # Authenticated commit history ledger
+├── docker-compose.yml          # PostgreSQL 16 local service container
+├── Makefile                    # Standardized build and deployment automation
+├── render.yaml                 # Render web service deployment blueprint
+├── vercel.json                 # Vercel static build routing configuration
+├── package.json                # Root monorepo workspace definition
+├── LICENSE                     # Voxion Labs Proprietary Research License
+└── README.md                   # System documentation
+```
 
 ---
 
@@ -62,7 +135,7 @@ The monorepo is partitioned into two workspaces:
       <br />
       <strong>1. Access Gateway & Landing</strong>
       <br />
-      Flutter-inspired landing experience with deterministic credential and 0-click demo authentication.
+      Landing interface with 0-click guest session initialization and theme coordinator.
     </td>
     <td width="50%" valign="top">
       <img src="docs/readme/demo-typing-lab.png" alt="SkillNODE Typing Lab & Telemetry" />
@@ -85,142 +158,19 @@ The monorepo is partitioned into two workspaces:
       <br />
       <strong>4. Operator Profile Studio</strong>
       <br />
-      Local-first player identity with verified operator badge, bio, and shareable performance records.
+      Local-first player identity with cryptographic integrity seal, discipline radar, and session logs.
     </td>
   </tr>
 </table>
 
 ---
 
-## Tech Stack
+## Security Model
 
-### Frontend
-
-| Dependency | Version | Purpose |
-|------------|---------|---------|
-| React | `19.2.4` | UI framework |
-| Vite | `7.3.1` | Build tool & dev server |
-| React Router | `7.13.2` | Client-side routing |
-| Tailwind CSS | `3.4.19` | Utility-first CSS |
-| Framer Motion | `12.38.0` | Animations & transitions |
-| Axios | `1.14.0` | HTTP client |
-| Socket.IO Client | `4.8.3` | WebSocket client |
-| Lucide React | `1.7.0` | Icon library |
-
-### Backend
-
-| Dependency | Version | Purpose |
-|------------|---------|---------|
-| Express | `4.21.2` | HTTP server framework |
-| Prisma | `6.16.1` | ORM & database toolkit |
-| Socket.IO | `4.8.3` | WebSocket server |
-| Zod | `3.25.76` | Schema validation |
-| OpenAI SDK | `5.22.0` | AI coaching integration |
-| Helmet | `8.1.0` | Security headers |
-| rate-limiter-flexible | `7.3.1` | Rate limiting |
-| JSON Web Token | `9.0.2` | Authentication tokens |
-| Resend | `6.1.0` | Transactional email |
-| Multer | `1.4.5-lts.2` | File upload handling |
-
-### Infrastructure
-
-| Tool | Purpose |
-|------|---------|
-| PostgreSQL 16 | Primary database (via Docker for local dev) |
-| Docker Compose | Local service orchestration |
-| npm workspaces | Monorepo dependency management |
-| Vercel | Frontend deployment |
-| Render | Backend deployment |
-
----
-
-## Architecture
-
-```
-┌────────────────────────────────────────────────────┐
-│                     Client (SPA)                   │
-│  React 19 · Vite 7 · Tailwind · Framer Motion     │
-│                                                    │
-│  ┌──────────┐ ┌──────────┐ ┌───────────────────┐  │
-│  │Dashboard │ │Activities│ │  Profile / Multi   │  │
-│  └────┬─────┘ └────┬─────┘ └────────┬──────────┘  │
-│       │             │                │             │
-│       └─────────────┼────────────────┘             │
-│                     │  Axios / Socket.IO Client    │
-└─────────────────────┼──────────────────────────────┘
-                      │
-            ┌─────────▼──────────┐
-            │   Express Server   │
-            │                    │
-            │  ┌──────────────┐  │
-            │  │   REST API   │  │
-            │  │  /api/ai     │  │
-            │  │  /api/auth   │  │
-            │  └──────┬───────┘  │
-            │         │          │
-            │  ┌──────▼───────┐  │
-            │  │  Socket.IO   │  │
-            │  │  (Realtime)  │  │
-            │  └──────────────┘  │
-            │                    │
-            │  Helmet · Zod ·    │
-            │  Rate Limiter      │
-            └─────────┬──────────┘
-                      │
-            ┌─────────▼──────────┐
-            │   PostgreSQL 16    │
-            │   (via Prisma)     │
-            └────────────────────┘
-```
-
-### Data Model
-
-The Prisma schema defines four core models:
-
-| Model | Purpose |
-|-------|---------|
-| `User` | Player identity — name, email, avatar, bio, social links |
-| `LoginChallenge` | Passwordless email-code authentication flow |
-| `AuditEvent` | Fair-play and security event log |
-| `ActivityResult` | Per-session scores, accuracy, duration, and metadata |
-
-Activity types: `typing`, `math`, `guess`, `coding`, `grammar`, `comprehension`.
-
----
-
-## Project Structure
-
-```
-SkillNODE/
-├── client/
-│   ├── public/                # Static assets & logo
-│   ├── src/
-│   │   ├── components/        # Reusable UI components
-│   │   ├── data/              # Static data & constants
-│   │   ├── hooks/             # Custom React hooks
-│   │   ├── lib/               # Utilities & API client
-│   │   ├── pages/             # Route-level page components
-│   │   └── styles/            # Global styles & Tailwind config
-│   ├── package.json
-│   └── vercel.json
-├── server/
-│   ├── prisma/                # Schema & migrations
-│   ├── src/
-│   │   ├── ai/                # OpenAI integration logic
-│   │   ├── auth/              # JWT & email-code auth
-│   │   ├── email/             # Transactional email (Resend)
-│   │   ├── middleware/        # Helmet, CORS, rate limiting
-│   │   ├── realtime/          # Socket.IO room & presence
-│   │   └── routes/            # Express route handlers
-│   └── package.json
-├── docs/readme/               # README screenshots
-├── tests/                     # Test suites
-├── docker-compose.yml         # Local PostgreSQL
-├── render.yaml                # Render deployment blueprint
-├── package.json               # Root workspace config
-├── LICENSE
-└── README.md
-```
+1. **HMAC-SHA256 Storage Envelopes**: Local state entries (`skillnode_profile`, `skillnode_results`) are sealed with a SHA-256 HMAC key held exclusively within Go WebAssembly linear memory. Hardware telemetry entropy is hashed alongside payloads; manual modification via browser DevTools triggers validation failure, logs an audit violation, and quarantines storage.
+2. **Zero-Trust Role Segregation**: Roles (`admin`, `staff`, `moderator`) cannot be granted via client storage. Local profiles default strictly to `player` or `guest`. Elevated roles require server-signed cryptographic JWT validation.
+3. **Anti-Cheat Validation**: Activity submissions are checked against physical boundaries (WPM threshold <= 260, minimum race durations >= 1500ms, mathematical score caps, clamp bounds). Unrealistic submissions are dropped prior to storage or synchronization.
+4. **JavaScript Sandbox Lockdown**: Browser bridges (`window.SkillNodeBridge`, `window.SkillNodeSocket`) are locked using `Object.freeze()` and defined as non-writable and non-configurable on the `window` object to mitigate console prototype hijacking.
 
 ---
 
@@ -228,72 +178,46 @@ SkillNODE/
 
 ### Prerequisites
 
-| Tool | Version |
-|------|---------|
+| Requirement | Minimum Version |
+|---|---|
+| Go | `1.22+` |
 | Node.js | `22.x` |
-| npm | `10+` |
-| Docker | Latest (for local PostgreSQL) |
+| Docker | Latest (optional, for local PostgreSQL) |
 
-### Installation
+### Installation & Build
 
 ```bash
 # Clone the repository
-git clone <repo-url> && cd SkillNODE
+git clone https://github.com/Voxion-Labs/SkillNODE.git && cd SkillNODE
 
-# Install all workspace dependencies
-npm install
+# Build the client production bundle (Go SSG + WebAssembly)
+make build-client
 
-# Start the local PostgreSQL database
-docker-compose up -d postgres
-
-# Push the Prisma schema to the database
-npm run db:push
+# Start local client development server (http://localhost:8080)
+make dev-client
 ```
 
-### Environment Variables
-
-Copy the `.env.example` in `server/` to `server/.env` and configure:
-
-| Variable | Description |
-|----------|-------------|
-| `DATABASE_URL` | PostgreSQL connection string |
-| `JWT_SECRET` | Secret for signing JWTs |
-| `OPENAI_API_KEY` | OpenAI API key for AI coaching |
-| `RESEND_API_KEY` | Resend API key for transactional email |
-| `RESEND_FROM` | Sender address for emails |
-| `PUBLIC_APP_URL` | Frontend origin for CORS |
-| `PORT` | Server port (default: `5000`) |
-
-### Development
+### Server Development
 
 ```bash
-# Start the backend (default: http://localhost:5000)
-npm run dev:server
+# Start local PostgreSQL database container
+make db-up
 
-# Start the frontend (default: http://localhost:5173)
-npm run dev:client
-```
+# Push Prisma schema to the database
+make db-push
 
-### Production Build
-
-```bash
-# Build both client and server
-npm run build
-
-# Build client only
-npm run build:client
+# Start the Node.js backend server (http://localhost:5000)
+make dev-server
 ```
 
 ---
 
-## Deployment
+## Deployment Pipeline
 
-| Service | Platform | Config |
-|---------|----------|--------|
-| Frontend | Vercel | `client/vercel.json` — SPA rewrites |
-| Backend | Render | `render.yaml` — build & start commands, env vars |
-
-The `render.yaml` blueprint is ready for one-click Render deployment. Vercel auto-detects the `client/` workspace via its configuration.
+| Target | Service | Configuration | Deployment Hook |
+|---|---|---|---|
+| Frontend | Vercel Static Hosting | `vercel.json` | Automated via GitHub integration, building from `client/dist` |
+| Backend API | Render Web Service | `render.yaml` | Automated via GitHub integration, running Node.js runtime |
 
 ---
 
