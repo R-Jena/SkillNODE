@@ -156,6 +156,7 @@ func SwitchView(route string) {
 		targetViewID = "view-multiplayer"
 		viewTitle = "Battle Net: Real-Time Multiplayer"
 		navKey = "multiplayer"
+		initMultiplayerView()
 	case strings.HasPrefix(route, "profile"):
 		targetViewID = "view-profile"
 		viewTitle = "Operator Profile Studio"

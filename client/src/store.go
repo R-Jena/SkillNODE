@@ -126,6 +126,7 @@ func SaveActivityResult(r Result) {
 	if err == nil {
 		storage := js.Global().Get("localStorage")
 		storage.Call("setItem", ResultsStorageKey, string(data))
+		SyncResultToBackend(r)
 	}
 }
 

@@ -1,5 +1,5 @@
 // SkillNODE Tiny Vanilla JS Bridge (Zero Dependencies, Zero node_modules)
-// Bridges DOM events, routing, and UI animations to the Go WebAssembly core.
+// Bridges DOM events, routing, real-time WebSockets, and animations to the Go WebAssembly core.
 
 (function () {
   window.SkillNodeBridge = {
@@ -91,6 +91,63 @@
   // Expose global shorthand for Go WASM
   window.showToast = function (title, message, kind) {
     window.SkillNodeBridge.toast(title, message, kind);
+  };
+
+  // Real-time Socket.IO Bridge
+  window.SkillNodeSocket = {
+    socket: null,
+    init: function (apiBaseUrl, name, onConnect, onPresence, onMessage, onRoomState, onError) {
+      if (typeof io === "undefined") {
+        console.warn("Socket.io not loaded from CDN");
+        return;
+      }
+      if (this.socket && this.socket.connected) return;
+
+      try {
+        this.socket = io(apiBaseUrl, {
+          transports: ["websocket", "polling"],
+          auth: { name: name || "Operator" },
+        });
+
+        this.socket.on("connect", () => {
+          if (typeof onConnect === "function") onConnect();
+        });
+
+        this.socket.on("presence", (data) => {
+          if (typeof onPresence === "function") onPresence(JSON.stringify(data));
+        });
+
+        this.socket.on("room_state", (data) => {
+          if (typeof onRoomState === "function") onRoomState(JSON.stringify(data));
+        });
+
+        this.socket.on("room_message", (data) => {
+          if (typeof onMessage === "function") onMessage(JSON.stringify(data));
+        });
+
+        this.socket.on("room_error", (data) => {
+          if (typeof onError === "function") onError(data.message || "Room error");
+        });
+      } catch (e) {
+        console.error("Socket initialization error:", e);
+      }
+    },
+
+    joinRoom: function (room) {
+      if (this.socket) this.socket.emit("join_room", { room: room });
+    },
+
+    joinByCode: function (code) {
+      if (this.socket) this.socket.emit("join_room_by_code", { code: code });
+    },
+
+    sendMessage: function (text) {
+      if (this.socket) this.socket.emit("room_message", { text: text });
+    },
+
+    setProfile: function (name) {
+      if (this.socket) this.socket.emit("set_profile", { name: name });
+    },
   };
 
   // Listen to hash change and notify Go WASM router if registered

@@ -16,6 +16,9 @@ func main() {
 	// 2. Initialize UI router, events, theme & profile
 	initUI()
 
+	// 3. Check Render backend API connectivity
+	CheckBackendHealth()
+
 	fmt.Println("SkillNODE Go WebAssembly Engine Ready.")
 
 	// Keep the Go runtime active to handle browser callbacks & events
