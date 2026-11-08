@@ -14,10 +14,10 @@
     ]
   },
   "ledger": {
-    "last_commit_sha": "b08304caaa214cb7dacc16b83387484bf6ba4a0c",
-    "last_commit_message": "fix(deploy): update Render blueprint to generate Prisma client during build",
+    "last_commit_sha": "3f71427ddabd86ee5f0a0f5cd65d8583f6f4de54",
+    "last_commit_message": "fix(vercel): add root go.mod and go.work pinned to Go 1.22 for Vercel Go runtime detection",
     "last_commit_author": "liambrooks-lab",
-    "last_updated_utc": "2026-11-08T05:08:56Z",
+    "last_updated_utc": "2026-11-08T07:02:40Z",
     "build_status": "verified",
     "system_architecture": {
       "frontend_pipeline": "Dynamic Go Templates (.tmpl)",
