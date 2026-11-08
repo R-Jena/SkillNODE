@@ -1,36 +1,24 @@
 {
-  "name": "client",
+  "name": "skillnode-client",
   "version": "1.0.0",
-  "description": "",
-  "main": "tailwind.config.js",
-  "engines": {
-    "node": "22.x"
-  },
+  "description": "SkillNODE - Operator Velocity & Cognitive Gaming Platform powered by Go WebAssembly",
+  "main": "index.html",
+  "type": "module",
   "scripts": {
     "dev": "go run build.go -serve",
     "serve": "go run build.go -serve",
+    "start": "go run build.go -serve",
     "build": "go run build.go",
-    "preview": "vite preview",
-    "test": "echo \"No tests yet\" && exit 0"
+    "test": "echo \"No tests specified\" && exit 0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
-  "dependencies": {
-    "axios": "^1.14.0",
-    "framer-motion": "^12.38.0",
-    "lucide-react": "^1.7.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "react-router-dom": "^7.13.2",
-    "socket.io-client": "^4.8.3"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^5.2.0",
-    "autoprefixer": "^10.4.27",
-    "postcss": "^8.5.8",
-    "tailwindcss": "^3.4.19",
-    "vite": "^7.3.1"
-  }
+  "keywords": [
+    "golang",
+    "webassembly",
+    "wasm",
+    "skillnode",
+    "gaming",
+    "speed-typing"
+  ],
+  "author": "Voxion Labs",
+  "license": "MIT"
 }

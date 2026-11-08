@@ -21,12 +21,12 @@ help:
 	@echo "  make setup          - Full project setup (install + prisma client generation)"
 	@echo ""
 	@echo "Development:"
-	@echo "  make dev-client     - Launch frontend Vite dev server (React 19)"
+	@echo "  make dev-client     - Launch frontend Go dev server (Go SSG + WebAssembly)"
 	@echo "  make dev-server     - Launch backend Node dev server (Nodemon + Express)"
 	@echo ""
 	@echo "Build:"
 	@echo "  make build          - Build client and verify server syntax"
-	@echo "  make build-client   - Build client production bundle (Vite)"
+	@echo "  make build-client   - Build client production bundle (Go SSG + WebAssembly)"
 	@echo "  make build-server   - Validate server syntax and modules"
 	@echo ""
 	@echo "Database & Docker:"
@@ -64,7 +64,7 @@ setup: install db-generate
 # DEVELOPMENT
 # ------------------------------------------------------------------------------
 dev-client:
-	npm run dev:client
+	cd client && go run build.go -serve
 
 dev-server:
 	npm run dev:server
@@ -72,11 +72,10 @@ dev-server:
 # ------------------------------------------------------------------------------
 # BUILD
 # ------------------------------------------------------------------------------
-build:
-	npm run build
+build: build-client
 
 build-client:
-	npm run build:client
+	cd client && go run build.go
 
 build-server:
 	npm run build -w server
