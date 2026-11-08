@@ -14,10 +14,10 @@
     ]
   },
   "ledger": {
-    "last_commit_sha": "7f850544a9871c32e2d84d754f79e4e50aeabbb4",
-    "last_commit_message": "feat(security): implement HMAC-SHA256 storage vault, zero-trust role lockdown, and anti-tamper client sandbox",
+    "last_commit_sha": "32205bdc7e721022560ff9148f6daa7bdbde44d8",
+    "last_commit_message": "chore: clean dead legacy files, restore logos, enforce SkillNODE title, and update architecture README",
     "last_commit_author": "liambrooks-lab",
-    "last_updated_utc": "2026-11-08T04:41:44Z",
+    "last_updated_utc": "2026-11-08T04:53:02Z",
     "build_status": "verified",
     "system_architecture": {
       "frontend_pipeline": "Dynamic Go Templates (.tmpl)",
