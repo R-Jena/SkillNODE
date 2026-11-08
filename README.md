@@ -4,59 +4,63 @@
 
 # <p align="center">SkillNODE</p>
 <p align="center">
-  A high-throughput skill training and evaluation platform built on a Go WebAssembly client architecture with a decoupled Node.js real-time backend.
+  A local-first cognitive and technical execution platform powered by an in-browser Go WebAssembly core with an asynchronous real-time telemetry conduit.
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/go-1.22+-00ADD8?logo=go&logoColor=white" alt="Go" />
   <img src="https://img.shields.io/badge/webassembly-WASM-654FF0?logo=webassembly&logoColor=white" alt="WebAssembly" />
-  <img src="https://img.shields.io/badge/node-22.x-339933?logo=node.js&logoColor=white" alt="Node" />
-  <img src="https://img.shields.io/badge/express-4-000000?logo=express&logoColor=white" alt="Express" />
-  <img src="https://img.shields.io/badge/prisma-6-2D3748?logo=prisma&logoColor=white" alt="Prisma" />
-  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/Socket.IO-4-010101?logo=socket.io&logoColor=white" alt="Socket.IO" />
+  <img src="https://img.shields.io/badge/realtime-Socket.IO-010101?logo=socket.io&logoColor=white" alt="Socket.IO" />
+  <img src="https://img.shields.io/badge/database-PostgreSQL%2016-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/orm-Prisma%206-2D3748?logo=prisma&logoColor=white" alt="Prisma" />
   <img src="https://img.shields.io/badge/license-VL--PRL-blue" alt="License" />
 </p>
 
 <p align="center">
   <a href="https://skillnode-azure.vercel.app"><strong>Live Application</strong></a>
   &nbsp;|&nbsp;
-  <a href="https://skillnode-api.onrender.com/healthz"><strong>API Health Status</strong></a>
+  <a href="https://skillnode-api.onrender.com/healthz"><strong>Telemetry Conduit Health</strong></a>
 </p>
 
 ---
 
-## System Overview
+## Architectural Philosophy
 
-SkillNODE is a dual-runtime monorepo engineered for low-latency cognitive and technical execution training. The client runtime runs on a compiled Go WebAssembly engine rendered through Go HTML templates, eliminating client-side JavaScript bundle overhead and node_modules dependencies. Data integrity and role assignments are cryptographically enforced in the browser through an HMAC-SHA256 vault.
+SkillNODE departs from bloated client-side JavaScript frameworks. The entire application interface, state lifecycle, and 6 training tracks execute inside an in-browser **Go WebAssembly (WASM)** virtual runtime compiled from Go templates. 
 
-The monorepo is partitioned into two independent workspaces:
+The client ships with **zero npm dependencies** and requires **zero node_modules**. State persistence is managed through an in-memory **HMAC-SHA256 Cryptographic Vault** with hardware telemetry entropy to prevent local manipulation.
 
-| Workspace | Runtime / Architecture | Core Responsibility |
+The backend is intentionally reduced to a lightweight, asynchronous **telemetry conduit and real-time message broker (dumb pipe)** — responsible strictly for peer room multiplexing via Socket.IO, database synchronization via Prisma, and external API relays (OpenAI hints, Resend transactional codes).
+
+---
+
+## Workspace Segregation
+
+| Workspace | Runtime / Subsystem | Architectural Role |
 |---|---|---|
-| `client/` | Go 1.22 + Go Templates (`.tmpl`) + WebAssembly (`app.wasm`) | Zero-dependency client runtime, static site generation, SPA navigation, 6 training engines, local HMAC-SHA256 vault |
-| `server/` | Node.js 22 + Express 4 + Prisma 6 + Socket.IO 4 | REST API, PostgreSQL persistence, AI coaching bridge, real-time WebSocket room coordination, telemetry ingestion |
+| `client/` | Go 1.22 + Go Templates (`.tmpl`) + WebAssembly (`app.wasm`) | **Primary Application Core** — Static site generation, SPA routing, 6 training engines (Typing, Quant, Code, Grammar, Estimation, Reading), HMAC-SHA256 integrity vault, zero node_modules. |
+| `server/` | Node.js 22 + Socket.IO 4 + Prisma 6 | **Asynchronous Telemetry Conduit** — Decoupled message broker for multiplayer room synchronization, PostgreSQL persistence, and transactional email relays. |
 
 ---
 
 ## Core Capabilities
 
-- **Typing Velocity Engine** — Real-time character differential rendering, 120ms cadence sampling, WPM calculation, error tracking, and window blur fair-play detection.
-- **Quant Sprint (Math Clash)** — 45-second high-pressure arithmetic and quantitative reasoning challenges with streak multipliers.
+- **Typing Velocity Engine** — Real-time character differential highlighter, 120ms cadence sampling ticker, WPM calculation, error tracking, and window blur fair-play detection.
+- **Quant Sprint (Math Clash)** — 45-second high-pressure quantitative reasoning and arithmetic sprint with streak multiplier logic.
 - **Algorithmic Code Arena** — Multi-language problem sets (JavaScript, Python, C++, TypeScript, SQL) with in-browser JavaScript evaluation sandbox and automated test assertion checklists.
-- **Battle Net Multiplayer** — Room preset switching, private room code matching, peer presence broadcasting, and synchronized messaging via Socket.IO.
+- **Battle Net Real-Time Arena** — Room preset switching, private room code matching, peer presence broadcasting, and synchronized messaging via Socket.IO.
 - **Cryptographic Storage Vault** — In-memory HMAC-SHA256 signed storage envelopes with device telemetry entropy to prevent local tampering and client-side privilege escalation.
 - **Operator Profile Studio** — Local-first player identity with cryptographic role verification, discipline radar, and shareable performance records.
 
 ---
 
-## Technical Architecture
+## Repository Structure
 
 ```
 SkillNODE/
 ├── client/
 │   ├── src/                    # Go WebAssembly core (compiled to wasm/app.wasm)
-│   │   ├── api.go              # Asynchronous backend syncing & health monitor
+│   │   ├── api.go              # Asynchronous backend telemetry & health monitor
 │   │   ├── coding.go           # Algorithmic challenge evaluation engine
 │   │   ├── drills.go           # Math Clash quant sprint (45s ticker)
 │   │   ├── main.go             # WASM entrypoint and subsystem bootstrap
@@ -93,27 +97,25 @@ SkillNODE/
 │   ├── prisma/
 │   │   └── schema.prisma       # Database schema and relational models
 │   ├── src/
-│   │   ├── ai/                 # OpenAI coaching engine interface
-│   │   ├── auth/               # JWT token generation and validation
-│   │   ├── controllers/        # Request handling and domain logic
+│   │   ├── ai/                 # OpenAI coaching conduit
+│   │   ├── auth/               # Cryptographic JWT token utilities
 │   │   ├── db/                 # Prisma client instance
 │   │   ├── email/              # Transactional email dispatcher (Resend)
 │   │   ├── middleware/         # CORS, Helmet, and auth guards
-│   │   ├── models/             # Domain schemas and data structures
 │   │   ├── realtime/           # Socket.IO room lifecycle and peer events
-│   │   ├── routes/             # REST routing tables
-│   │   ├── services/           # Background email triggers and AI services
-│   │   ├── storage/            # Local static upload handling
+│   │   ├── routes/             # Telemetry & auth routing tables
+│   │   ├── storage/            # Static upload handling
 │   │   ├── env.js              # Strict environment variable validation
-│   │   └── server.js           # HTTP + WebSocket server initialization
-│   ├── package.json            # Server dependencies and lifecycle scripts
-│   └── package-lock.json       # Deterministic server dependency lockfile
+│   │   └── server.js           # Realtime broker entrypoint
+│   ├── package.json            # Conduit dependencies and lifecycle scripts
+│   └── package-lock.json       # Deterministic conduit lockfile
 ├── assets/                     # Shared branding assets (logo.png)
 ├── docs/
 │   └── readme/                 # Technical interface documentation captures
 ├── .github/
 │   └── workflows/
-│       └── bot-manifest.yml    # Cryptographic commit audit ledger action
+│       ├── bot-manifest.yml    # Cryptographic commit audit ledger action
+│       └── ci-cd.yml           # Automated build & verification pipeline
 ├── bot-manifest.json           # Authenticated commit history ledger
 ├── docker-compose.yml          # PostgreSQL 16 local service container
 ├── Makefile                    # Standardized build and deployment automation
@@ -126,7 +128,7 @@ SkillNODE/
 
 ---
 
-## Screenshots
+## Interface Reference
 
 <table>
   <tr>
@@ -197,7 +199,7 @@ make build-client
 make dev-client
 ```
 
-### Server Development
+### Telemetry Conduit Development
 
 ```bash
 # Start local PostgreSQL database container
@@ -206,7 +208,7 @@ make db-up
 # Push Prisma schema to the database
 make db-push
 
-# Start the Node.js backend server (http://localhost:5000)
+# Start the realtime conduit server (http://localhost:5000)
 make dev-server
 ```
 
@@ -216,8 +218,8 @@ make dev-server
 
 | Target | Service | Configuration | Deployment Hook |
 |---|---|---|---|
-| Frontend | Vercel Static Hosting | `vercel.json` | Automated via GitHub integration, building from `client/dist` |
-| Backend API | Render Web Service | `render.yaml` | Automated via GitHub integration, running Node.js runtime |
+| Frontend Client | Vercel Static Hosting | `vercel.json` | Automated via GitHub integration, serving pre-compiled `client/dist` |
+| Telemetry Conduit | Render Web Service | `render.yaml` | Automated via GitHub integration, running Node.js real-time service |
 
 ---
 

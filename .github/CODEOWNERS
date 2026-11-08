@@ -2,15 +2,15 @@
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
 # Global default: All repository files require review from repository maintainers
-* @Voxion-Labs/maintainers @liambrooks-lab
+* @Voxion-Labs/maintainers @R-Jena
 
 # CI/CD Workflows & Security Configurations
-.github/workflows/ @Voxion-Labs/maintainers @liambrooks-lab
-.github/CODEOWNERS @Voxion-Labs/maintainers @liambrooks-lab
+.github/workflows/ @Voxion-Labs/maintainers @R-Jena
+.github/CODEOWNERS @Voxion-Labs/maintainers @R-Jena
 
 # Core Server & Database Schema
-/server/prisma/ @Voxion-Labs/maintainers @liambrooks-lab
-/server/src/ @Voxion-Labs/maintainers @liambrooks-lab
+/server/prisma/ @Voxion-Labs/maintainers @R-Jena
+/server/src/ @Voxion-Labs/maintainers @R-Jena
 
 # Frontend Client
-/client/ @Voxion-Labs/maintainers @liambrooks-lab
+/client/ @Voxion-Labs/maintainers @R-Jena
