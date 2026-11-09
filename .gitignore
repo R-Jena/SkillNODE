@@ -4,7 +4,7 @@ node_modules/
 .env
 **/.env
 
-dist/
+# Build output (client/dist is tracked for instant edge CDN deployment)
 build/
 coverage/
 

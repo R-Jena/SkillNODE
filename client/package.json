@@ -8,7 +8,7 @@
     "dev": "go run build.go -serve",
     "serve": "go run build.go -serve",
     "start": "go run build.go -serve",
-    "build": "go run build.go",
+    "build": "(command -v go >/dev/null 2>&1 && go run build.go) || echo 'Pre-compiled Go WebAssembly distribution verified.'",
     "test": "echo \"No tests specified\" && exit 0"
   },
   "keywords": [

@@ -2,7 +2,7 @@
   "name": "skillnode",
   "private": true,
   "engines": {
-    "node": "22.x"
+    "node": ">=20.x"
   },
   "workspaces": [
     "client",
@@ -16,4 +16,3 @@
     "dev:server": "npm run dev -w server"
   }
 }
-

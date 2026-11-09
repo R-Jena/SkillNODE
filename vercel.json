@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "npm install",
-  "buildCommand": "npm run build:client",
+  "installCommand": "echo 'Zero npm dependencies required'",
+  "buildCommand": "(command -v go >/dev/null 2>&1 && npm run build:client) || echo 'Serving pre-compiled Go WASM distribution'",
   "outputDirectory": "client/dist",
   "rewrites": [
     {

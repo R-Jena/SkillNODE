@@ -117,9 +117,11 @@ SkillNODE/
 │       ├── bot-manifest.yml    # Cryptographic commit audit ledger action
 │       └── ci-cd.yml           # Automated build & verification pipeline
 ├── bot-manifest.json           # Authenticated commit history ledger
+├── Dockerfile                  # Production container definition for Render runtime
+├── .dockerignore               # Docker build context exclusions
 ├── docker-compose.yml          # PostgreSQL 16 local service container
 ├── Makefile                    # Standardized build and deployment automation
-├── render.yaml                 # Render web service deployment blueprint
+├── render.yaml                 # Render web service deployment blueprint (Docker runtime)
 ├── vercel.json                 # Vercel static build routing configuration
 ├── package.json                # Root monorepo workspace definition
 ├── LICENSE                     # Voxion Labs Proprietary Research License
