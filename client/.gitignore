@@ -1,4 +1,4 @@
-# Local build artifacts
-index.html
-styles.css
-wasm/
+# Local client root build artifacts only
+/index.html
+/styles.css
+/wasm/

@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark-purple">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="SkillNODE — Train hard. Look sharp. The premium skill platform for typing, coding, math, grammar, and multiplayer competition.">
+    <meta name="theme-color" content="#07070f">
+    <title>SkillNODE</title>
+    <link rel="icon" type="image/png" href="logo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="styles.css?v=1.0.0">
+
+    <script>
+      
+      try {
+        const t = localStorage.getItem("skillnode-theme");
+        if (t === "light-blue" || t === "light") {
+          document.documentElement.setAttribute("data-theme", "light-white");
+        } else if (t) {
+          document.documentElement.setAttribute("data-theme", t);
+        } else {
+          document.documentElement.setAttribute("data-theme", "dark-purple");
+        }
+      } catch (e) {}
+    </script>
+</head>
+
+<body class="bg-slate-950 text-slate-100" style="margin: 0; padding: 0; overflow: hidden;">
+
+    <div id="loadingScreen" class="loading-screen" style="position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: var(--bg); transition: opacity 0.3s ease, visibility 0.3s ease;">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 32px 40px; border-radius: 24px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--card-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); text-align: center; max-width: 90vw;">
+            <div style="position: relative; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;">
+                <img src="logo.png" alt="SkillNODE logo" style="width: 36px; height: 36px; border-radius: 10px; object-fit: contain;">
+                <div style="position: absolute; inset: 0; border: 3px solid var(--border-subtle); border-top-color: var(--accent); border-radius: 50%; animation: spin-slow 1.2s linear infinite;"></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text);">SkillNODE</span>
+                <span id="loadingStatusText" style="font-size: 0.82rem; color: var(--text-muted); font-weight: 500;">Initializing Go WebAssembly Engine...</span>
+            </div>
+        </div>
+    </div>
+
+<div id="authModalBackdrop" class="modal-backdrop" style="position: fixed; inset: 0; z-index: 999; background: rgba(0, 0, 0, 0.72); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: none; align-items: center; justify-content: center; padding: 20px;">
+
+  <div class="card login-card" style="width: 100%; max-width: 440px; padding: 32px 28px; position: relative;">
+    
+    <button id="authModalCloseBtn" style="position: absolute; right: 16px; top: 16px; border: none; background: transparent; color: var(--text-faint); font-size: 1.1rem; cursor: pointer; padding: 4px;">
+      <i class="fas fa-times"></i>
+    </button>
+
+    <div style="text-align: center; margin-bottom: 24px;">
+      <img src="logo.png" alt="SkillNODE" style="width: 44px; height: 44px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px;">
+      <div class="display-title" style="font-size: 1.4rem; color: var(--text);">Operator Access</div>
+      <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">Sign in or start instantly with local-first guest identity.</div>
+    </div>
+
+    <div class="page-tabs" style="margin-bottom: 20px; border-radius: 10px;">
+      <button id="authTabSignIn" class="page-tab active">Sign In</button>
+      <button id="authTabSignUp" class="page-tab">Sign Up</button>
+    </div>
+
+    <form id="authForm" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 14px;">
+      <div id="signupNameField" style="display: none;">
+        <label class="label-sm" style="display: block; margin-bottom: 6px;">Display Name</label>
+        <input id="authInputName" type="text" class="field" placeholder="Liam Brooks" style="border-radius: 10px;">
+      </div>
+
+      <div>
+        <label class="label-sm" style="display: block; margin-bottom: 6px;">Username or Email</label>
+        <input id="authInputUsername" type="text" class="field" placeholder="operator_one" required style="border-radius: 10px;">
+      </div>
+
+      <div>
+        <label class="label-sm" style="display: block; margin-bottom: 6px;">Password</label>
+        <input id="authInputPassword" type="password" class="field" placeholder="••••••••••••" required style="border-radius: 10px;">
+      </div>
+
+      <button id="authSubmitBtn" type="submit" class="btn btn-primary" style="margin-top: 6px; width: 100%; border-radius: 12px; height: 44px;">
+        Continue
+      </button>
+
+      <div style="text-align: center; margin: 8px 0; font-size: 0.78rem; color: var(--text-faint);">— or —</div>
+
+      <button id="authGuestBtn" type="button" class="btn btn-secondary" style="width: 100%; border-radius: 12px; height: 44px; gap: 8px;">
+        <i class="fas fa-bolt" style="color: var(--accent-bright);"></i>
+        <span>Instant Guest Play (No Login)</span>
+      </button>
+    </form>
+  </div>
+
+</div>
+
+    <div id="root" class="app-shell" style="display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; width: 100%;">
+
+<div class="flutter-banner" style="flex-shrink: 0; padding: 6px 16px; font-size: 0.78rem;">
+  <span>⚡ SkillNODE 2026 Engine is live! Advanced coding arena, real-time presence & AI telemetry active.</span>
+</div>
+
+<header class="top-bar">
+  <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+    <div class="top-bar-title">
+      <i class="fas fa-terminal" style="color: var(--accent); font-size: 13px;"></i>
+      <span id="currentViewTitle" style="font-size: 0.82rem; font-weight: 700; color: var(--text);">Dashboard</span>
+    </div>
+    <div class="top-bar-live" style="display: flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 700;">
+      <span class="status-dot" style="width: 6px; height: 6px;"></span>
+      <span>SYSTEM ONLINE</span>
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <a href="#/activities/typing" class="btn btn-primary btn-sm" style="height: 32px; font-size: 0.78rem; padding: 0 14px; gap: 6px;">
+      <i class="fas fa-keyboard"></i>
+      <span>Quick Race</span>
+    </a>
+  </div>
+</header>
+
+        <div style="display: flex; flex: 1; min-height: 0; overflow: hidden; width: 100%;">
+            
+<aside class="sidebar" style="padding: 0; height: 100%; max-height: 100%; display: flex; flex-direction: column;">
+  
+  <div class="shell-brand" style="padding: 16px 16px 12px; border-bottom: 1px solid var(--border-subtle); flex-shrink: 0;">
+    <div class="shell-brand-lockup" style="display: flex; align-items: center; gap: 10px;">
+      <img src="logo.png" alt="SkillNODE" style="width: 34px; height: 34px; border-radius: 50%; object-fit: contain;">
+      <div>
+        <div class="hero-kicker" style="font-size: 0.625rem; letter-spacing: 0.14em;">Skill Arena</div>
+        <div class="display-title" style="font-size: 1.1rem; line-height: 1.15; color: var(--text);">SkillNODE</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="shell-player-card" style="margin: 12px 12px 8px; padding: 12px; background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: 16px; flex-shrink: 0;">
+    <div class="label-sm" style="margin-bottom: 8px; fontSize: 0.68rem;">Operator</div>
+    <div class="shell-player-main" style="display: flex; align-items: center; gap: 10px;">
+      <div id="sidebarAvatar" style="width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; border: 2px solid var(--border);">
+        O
+      </div>
+      <div style="min-width: 0; flex: 1;">
+        <div id="sidebarPlayerName" style="font-size: 0.875rem; font-weight: 700; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          Operator
+        </div>
+        <div id="sidebarPlayerHandle" style="font-size: 0.72rem; color: var(--accent-bright); margin-top: 1px; font-weight: 600;">
+          @operator
+        </div>
+      </div>
+    </div>
+    
+    <div class="shell-status-row" style="display: flex; gap: 6px; margin-top: 10px;">
+      <div class="shell-status-pill" style="flex: 1; padding: 5px 8px; background: var(--surface); border: 1px solid var(--border-subtle); border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+        <i class="fas fa-shield-alt" style="color: var(--accent); font-size: 11px;"></i>
+        <span style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">Fair play</span>
+      </div>
+      <div class="shell-status-pill" style="flex: 1; padding: 5px 8px; background: var(--surface); border: 1px solid var(--border-subtle); border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+        <span class="status-dot" style="width: 6px; height: 6px;"></span>
+        <span style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">Live</span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="shell-nav" style="padding: 8px 12px; flex: 1; overflow-y: auto;">
+    <a href="#/dashboard" class="nav-item active" data-nav="dashboard">
+      <i class="fas fa-th-large" style="width: 18px; text-align: center;"></i>
+      <span>Dashboard</span>
+    </a>
+    <a href="#/activities" class="nav-item" data-nav="activities">
+      <i class="fas fa-trophy" style="width: 18px; text-align: center;"></i>
+      <span>Skill Labs</span>
+    </a>
+    <a href="#/multiplayer" class="nav-item" data-nav="multiplayer">
+      <i class="fas fa-gamepad" style="width: 18px; text-align: center;"></i>
+      <span>Multiplayer</span>
+    </a>
+    <a href="#/profile" class="nav-item" data-nav="profile">
+      <i class="fas fa-user-circle" style="width: 18px; text-align: center;"></i>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <div class="shell-footer" style="padding: 12px 14px; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
+    <button id="toggleThemeBtn" class="btn btn-ghost btn-sm shell-theme-toggle" title="Toggle Theme" style="padding: 6px 10px;">
+      <i id="themeIcon" class="fas fa-moon"></i>
+    </button>
+    <button id="authTriggerBtn" class="btn btn-ghost btn-sm" style="font-size: 0.78rem; gap: 6px;">
+      <i class="fas fa-sign-in-alt"></i>
+      <span id="authBtnLabel">Sign In</span>
+    </button>
+  </div>
+</aside>
+
+            <main class="main-area" style="flex: 1; display: flex; flex-direction: column; height: 100%; max-height: 100%; overflow: hidden; min-width: 0;">
+                <div id="pageFrame" class="page-frame" style="flex: 1; overflow-y: auto; overflow-x: hidden; padding: 28px 36px 64px; display: flex; flex-direction: column; gap: 24px; min-height: 0;">
+                    
+<div id="view-dashboard" class="page-view flex-col-fill" style="gap: 24px; padding-bottom: 48px;">
+
+  <div class="app-card-grid-4" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; flex-shrink: 0;">
+    <div class="metric-box">
+      <div class="label-sm" style="color: var(--text-faint); margin-bottom: 4px;">Total Attempts</div>
+      <div id="metricTotalAttempts" style="font-size: 1.6rem; font-weight: 800; color: var(--text);">0</div>
+    </div>
+    <div class="metric-box">
+      <div class="label-sm" style="color: var(--text-faint); margin-bottom: 4px;">Integrity Alerts</div>
+      <div id="metricAlertCount" style="font-size: 1.6rem; font-weight: 800; color: #f59e0b;">0</div>
+    </div>
+    <div class="metric-box">
+      <div class="label-sm" style="color: var(--text-faint); margin-bottom: 4px;">Personal Bests</div>
+      <div id="metricPersonalBests" style="font-size: 1.6rem; font-weight: 800; color: var(--text);">0</div>
+    </div>
+    <div class="metric-box">
+      <div class="label-sm" style="color: var(--text-faint); margin-bottom: 4px;">Live Competitors</div>
+      <div id="metricCompetitors" style="font-size: 1.6rem; font-weight: 800; color: var(--accent-bright);">1 online</div>
+    </div>
+  </div>
+
+  <div class="app-main-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px;">
+
+    <div class="card" style="padding: 26px 28px; display: flex; flex-direction: column;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-shrink: 0;">
+        <div>
+          <span class="flutter-pill-tag" style="font-size: 0.68rem; padding: 3px 10px;">Active Arena</span>
+          <div style="font-size: 1.25rem; font-weight: 800; color: var(--text); margin-top: 4px;">
+            Featured Execution Tracks
+          </div>
+        </div>
+        <a href="#/activities" class="btn btn-ghost btn-sm" style="display: flex; align-items: center; gap: 5px; border-radius: 9999px;">
+          <span>See all tracks</span>
+          <i class="fas fa-arrow-right" style="font-size: 11px;"></i>
+        </a>
+      </div>
+
+      <div class="app-card-grid-2" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+        
+        <a href="#/activities/typing" style="text-decoration: none;">
+          <div class="card animate-slide-up" style="padding: 18px 20px; height: 100%; cursor: pointer; background: var(--surface-2); border-radius: 16px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+            <div style="height: 4px; border-radius: 9999px; background: var(--btn-bg); margin-bottom: 12px; opacity: 0.9;"></div>
+            <div class="label-sm" style="margin-bottom: 4px; color: var(--accent-bright);">Speed Lab</div>
+            <div style="font-size: 0.98rem; font-weight: 800; color: var(--text); line-height: 1.3;">Typing Velocity</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; line-height: 1.55; flex: 1;">
+              Track WPM, rhythm, accuracy, and fair-play signals in a clean competitive layout.
+            </div>
+          </div>
+        </a>
+
+        <a href="#/activities/math" style="text-decoration: none;">
+          <div class="card animate-slide-up" style="padding: 18px 20px; height: 100%; cursor: pointer; background: var(--surface-2); border-radius: 16px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+            <div style="height: 4px; border-radius: 9999px; background: #f59e0b; margin-bottom: 12px; opacity: 0.9;"></div>
+            <div class="label-sm" style="margin-bottom: 4px; color: #fbbf24;">Quant Lab</div>
+            <div style="font-size: 0.98rem; font-weight: 800; color: var(--text); line-height: 1.3;">Math Clash</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; line-height: 1.55; flex: 1;">
+              Timed arithmetic drills with streak building, adaptive level ramps, and pressure handling.
+            </div>
+          </div>
+        </a>
+
+        <a href="#/activities/code" style="text-decoration: none;">
+          <div class="card animate-slide-up" style="padding: 18px 20px; height: 100%; cursor: pointer; background: var(--surface-2); border-radius: 16px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+            <div style="height: 4px; border-radius: 9999px; background: #10b981; margin-bottom: 12px; opacity: 0.9;"></div>
+            <div class="label-sm" style="margin-bottom: 4px; color: #34d399;">Developer Track</div>
+            <div style="font-size: 0.98rem; font-weight: 800; color: var(--text); line-height: 1.3;">Code Arena</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; line-height: 1.55; flex: 1;">
+              Solve interview-style coding challenges, run test cases, and evaluate algorithms.
+            </div>
+          </div>
+        </a>
+
+        <a href="#/activities/guess" style="text-decoration: none;">
+          <div class="card animate-slide-up" style="padding: 18px 20px; height: 100%; cursor: pointer; background: var(--surface-2); border-radius: 16px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+            <div style="height: 4px; border-radius: 9999px; background: #ec4899; margin-bottom: 12px; opacity: 0.9;"></div>
+            <div class="label-sm" style="margin-bottom: 4px; color: #f472b6;">Logic Lab</div>
+            <div style="font-size: 0.98rem; font-weight: 800; color: var(--text); line-height: 1.3;">Guess Works</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; line-height: 1.55; flex: 1;">
+              Switch between number and word deduction to sharpen pattern recognition and memory.
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      
+      <div class="card" style="padding: 24px; display: flex; flex-direction: column;">
+        <div class="label-sm" style="margin-bottom: 4px;">Typing Leaderboard</div>
+        <div style="font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 14px;">
+          Shared competition layer
+        </div>
+        <div id="dashboardLeaderboardFeed" class="inner-scroll" style="display: flex; flex-direction: column; gap: 8px; max-height: 240px;">
+          <div style="font-size: 0.85rem; color: var(--text-muted); padding: 12px; text-align: center; border-radius: 10px; background: var(--surface-2);">
+            Complete a typing run to record your score on the live leaderboard.
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 24px; display: flex; flex-direction: column;">
+        <div class="label-sm" style="margin-bottom: 4px;">Recent Session Logs</div>
+        <div style="font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 14px;">
+          Telemetry history
+        </div>
+        <div id="dashboardRecentFeed" class="inner-scroll" style="display: flex; flex-direction: column; gap: 8px; max-height: 240px;">
+          <div style="font-size: 0.85rem; color: var(--text-muted); padding: 12px; text-align: center; border-radius: 10px; background: var(--surface-2);">
+            No recent attempts logged. Jump into any arena to begin training.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="view-activities" class="page-view flex-col-fill" style="gap: 24px; padding-bottom: 48px; display: none;">
+
+  <div class="card" style="padding: 28px 32px; background: linear-gradient(135deg, var(--surface), var(--surface-2));">
+    <span class="flutter-pill-tag" style="margin-bottom: 8px;">Cognitive & Technical Disciplines</span>
+    <div class="display-title" style="font-size: 1.6rem; color: var(--text); margin-top: 6px;">
+      Skill Training Labs
+    </div>
+    <div style="font-size: 0.92rem; color: var(--text-muted); margin-top: 6px; max-width: 680px; line-height: 1.6;">
+      Choose a discipline to start an assessment session. Telemetry records cadence, accuracy, errors, and integrity metrics in real time.
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px;">
+
+    <a href="#/activities/typing" style="text-decoration: none;">
+      <div class="card" style="padding: 24px; height: 100%; display: flex; flex-direction: column; cursor: pointer;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">SPEED LAB</span>
+          <span style="font-size: 0.75rem; color: var(--text-faint); font-weight: 600;">2-5 min rounds</span>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--text);">Typing Velocity</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.55; flex: 1;">
+          Track live WPM, cadence smoothness, keystroke accuracy, and fair-play blur signals in a competitive arena.
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+          <span style="font-size: 0.78rem; font-weight: 700; color: var(--accent);">Race ready</span>
+          <span class="btn btn-primary btn-sm" style="height: 32px; font-size: 0.78rem; border-radius: 9999px;">Enter Lab →</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="#/activities/math" style="text-decoration: none;">
+      <div class="card" style="padding: 24px; height: 100%; display: flex; flex-direction: column; cursor: pointer;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">QUANT LAB</span>
+          <span style="font-size: 0.75rem; color: var(--text-faint); font-weight: 600;">45 sec sprint</span>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--text);">Math Clash</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.55; flex: 1;">
+          Rapid mental math calculations with streak multipliers, adaptive difficulty, and time pressure handling.
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+          <span style="font-size: 0.78rem; font-weight: 700; color: #fbbf24;">Duel ready</span>
+          <span class="btn btn-secondary btn-sm" style="height: 32px; font-size: 0.78rem; border-radius: 9999px;">Enter Lab →</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="#/activities/code" style="text-decoration: none;">
+      <div class="card" style="padding: 24px; height: 100%; display: flex; flex-direction: column; cursor: pointer;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">DEVELOPER TRACK</span>
+          <span style="font-size: 0.75rem; color: var(--text-faint); font-weight: 600;">5-20 min challenges</span>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--text);">Code Arena</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.55; flex: 1;">
+          Solve algorithmic challenges in JavaScript, Python, C++, TypeScript, or SQL with instant automated test validation.
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+          <span style="font-size: 0.78rem; font-weight: 700; color: #34d399;">Contest board</span>
+          <span class="btn btn-secondary btn-sm" style="height: 32px; font-size: 0.78rem; border-radius: 9999px;">Enter Lab →</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="#/activities/guess" style="text-decoration: none;">
+      <div class="card" style="padding: 24px; height: 100%; display: flex; flex-direction: column; cursor: pointer;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <span class="badge" style="background: rgba(236, 72, 153, 0.15); color: #f472b6;">LOGIC LAB</span>
+          <span style="font-size: 0.75rem; color: var(--text-faint); font-weight: 600;">Quick rounds</span>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--text);">Guess Works</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.55; flex: 1;">
+          High-entropy number and word guessing games designed to sharpen intuition and binary search patterning.
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+          <span style="font-size: 0.78rem; font-weight: 700; color: #f472b6;">Party mode</span>
+          <span class="btn btn-secondary btn-sm" style="height: 32px; font-size: 0.78rem; border-radius: 9999px;">Enter Lab →</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="#/activities/grammar" style="text-decoration: none;">
+      <div class="card" style="padding: 24px; height: 100%; display: flex; flex-direction: column; cursor: pointer;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">LANGUAGE LAB</span>
+          <span style="font-size: 0.75rem; color: var(--text-faint); font-weight: 600;">6 question sets</span>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--text);">Grammar Edge</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.55; flex: 1;">
+          Sharpen precision, tone discernment, and grammatical mastery under strict timing constraints.
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+          <span style="font-size: 0.78rem; font-weight: 700; color: #c084fc;">League ready</span>
+          <span class="btn btn-secondary btn-sm" style="height: 32px; font-size: 0.78rem; border-radius: 9999px;">Enter Lab →</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="#/activities/comprehension" style="text-decoration: none;">
+      <div class="card" style="padding: 24px; height: 100%; display: flex; flex-direction: column; cursor: pointer;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <span class="badge" style="background: rgba(132, 204, 22, 0.15); color: #a3e635;">COMPREHENSION LAB</span>
+          <span style="font-size: 0.75rem; color: var(--text-faint); font-weight: 600;">1 passage sets</span>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--text);">Reading Intel</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.55; flex: 1;">
+          Read passages rapidly, extract core architectural structures, and solve inference-based comprehension puzzles.
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+          <span style="font-size: 0.78rem; font-weight: 700; color: #a3e635;">Squad review</span>
+          <span class="btn btn-secondary btn-sm" style="height: 32px; font-size: 0.78rem; border-radius: 9999px;">Enter Lab →</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<div id="view-activity-typing" class="page-view flex-col-fill" style="gap: 20px; padding-bottom: 48px; display: none;">
+
+  <div class="card" style="padding: 24px 28px; background: linear-gradient(135deg, var(--surface), var(--surface-2)); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">SPEED LAB</span>
+        <span id="typingFairPlayBadge" style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; font-weight: 700; color: #10b981; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 2px 8px; border-radius: 999px;">
+          <i class="fas fa-shield-alt"></i> Focus Active
+        </span>
+      </div>
+      <div class="display-title" style="font-size: 1.45rem; color: var(--text);">Typing Velocity & Cadence Telemetry</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <button id="typingResetBtn" class="btn btn-secondary btn-sm" style="border-radius: 9999px; gap: 6px;">
+        <i class="fas fa-redo-alt"></i> New Passage
+      </button>
+      <a href="#/activities" class="btn btn-ghost btn-sm" style="border-radius: 9999px;">
+        Exit to Labs
+      </a>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="color: var(--text-faint); margin-bottom: 4px;">Velocity (WPM)</div>
+      <div id="typingLiveWpm" style="font-size: 2rem; font-weight: 800; color: var(--accent-bright);">0</div>
+    </div>
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="color: var(--text-faint); margin-bottom: 4px;">Accuracy</div>
+      <div id="typingLiveAccuracy" style="font-size: 2rem; font-weight: 800; color: #10b981;">100%</div>
+    </div>
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="color: var(--text-faint); margin-bottom: 4px;">Progress</div>
+      <div id="typingLiveProgress" style="font-size: 2rem; font-weight: 800; color: var(--text);">0%</div>
+    </div>
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="color: var(--text-faint); margin-bottom: 4px;">Elapsed</div>
+      <div id="typingLiveElapsed" style="font-size: 2rem; font-weight: 800; color: var(--text-muted);">0.0s</div>
+    </div>
+  </div>
+
+  <div class="timer-bar-wrap" style="height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden; border: 1px solid var(--border-subtle);">
+    <div id="typingProgressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-bright)); transition: width 0.1s ease;"></div>
+  </div>
+
+  <div class="card" style="padding: 28px; display: flex; flex-direction: column; gap: 20px;">
+    
+    <div id="typingPassageContainer" style="font-family: 'JetBrains Mono', monospace; font-size: 1.18rem; line-height: 1.85; padding: 24px; border-radius: 14px; background: var(--surface-3); border: 1px solid var(--border); min-height: 110px; user-select: none;">
+      
+    </div>
+
+    <div>
+      <input
+        id="typingInputBox"
+        type="text"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        class="field"
+        placeholder="Start typing here to activate live telemetry cadence..."
+        style="height: 48px; font-size: 1rem; font-family: 'JetBrains Mono', monospace; padding: 0 18px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2);"
+      />
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted);">
+      <span id="typingPlaceholderTip"><i class="fas fa-info-circle"></i> Keystrokes are evaluated in real time at 120ms intervals.</span>
+      <span id="typingStreakCounter" style="font-weight: 700; color: var(--accent-bright);">Streak: 0</span>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 24px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+      <div class="label-sm">Session Run Ledger</div>
+      <span style="font-size: 0.75rem; color: var(--text-faint);">Latest 8 attempts</span>
+    </div>
+    <div id="typingRunsList" style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="font-size: 0.82rem; color: var(--text-faint); padding: 12px; text-align: center; background: var(--surface-2); border-radius: 10px;">
+        Complete a run to save telemetry to your session profile.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="view-activity-code" class="page-view flex-col-fill" style="gap: 20px; padding-bottom: 48px; display: none;">
+
+  <div class="card" style="padding: 24px 28px; background: linear-gradient(135deg, var(--surface), var(--surface-2)); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">DEVELOPER TRACK</span>
+        <span style="font-size: 0.72rem; font-weight: 700; color: var(--accent-bright); background: var(--accent-dim); border: 1px solid var(--border); padding: 2px 8px; border-radius: 999px;">
+          Multi-Language
+        </span>
+      </div>
+      <div class="display-title" style="font-size: 1.45rem; color: var(--text);">Algorithmic Code Arena</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <button id="codeRunBtn" class="btn btn-primary btn-sm" style="border-radius: 9999px; gap: 6px;">
+        <i class="fas fa-play"></i> Run Tests
+      </button>
+      <a href="#/activities" class="btn btn-ghost btn-sm" style="border-radius: 9999px;">Exit</a>
+    </div>
+  </div>
+
+  <div class="page-tabs" style="border-radius: 12px; padding: 6px;">
+    <button class="page-tab active" data-lang="javascript">JavaScript</button>
+    <button class="page-tab" data-lang="python">Python</button>
+    <button class="page-tab" data-lang="cpp">C++</button>
+    <button class="page-tab" data-lang="typescript">TypeScript</button>
+    <button class="page-tab" data-lang="sql">SQL</button>
+  </div>
+
+  <div id="codeChallengeTabs" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+    
+  </div>
+
+  <div style="display: grid; grid-template-columns: minmax(300px, 1fr) minmax(380px, 1.4fr); gap: 18px; align-items: stretch;">
+
+    <div class="card" style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+      <div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span id="challengeDifficulty" class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">Medium</span>
+          <span id="challengeTrackLabel" style="font-size: 0.75rem; color: var(--text-faint);">Local execution</span>
+        </div>
+        <div id="challengeTitle" style="font-size: 1.25rem; font-weight: 800; color: var(--text); margin-top: 8px;">
+          Merge Busy Intervals
+        </div>
+        <div id="challengeDescription" style="font-size: 0.88rem; color: var(--text-muted); margin-top: 8px; line-height: 1.6;">
+          Merge overlapping booking intervals and return them in sorted order.
+        </div>
+      </div>
+
+      <div>
+        <div class="label-sm" style="margin-bottom: 6px;">Constraints & Targets</div>
+        <ul id="challengeConstraints" style="margin: 0; padding-left: 20px; font-size: 0.82rem; color: var(--text-faint); line-height: 1.7;">
+          <li>Sort before merging.</li>
+          <li>Target time complexity: O(n log n).</li>
+        </ul>
+      </div>
+
+      <div style="margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+        <div class="label-sm" style="margin-bottom: 8px;">Automated Test Results</div>
+        <div id="codeTestResultsFeed" style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;">
+          <div style="font-size: 0.8rem; color: var(--text-faint); padding: 10px; background: var(--surface-2); border-radius: 8px; text-align: center;">
+            Click 'Run Tests' to validate your solution against sample assertions.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-editor-wrap" style="min-height: 480px;">
+      <div class="code-editor-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-code" style="color: var(--accent); font-size: 13px;"></i>
+          <span id="editorLanguageLabel" style="font-size: 0.78rem; font-weight: 700; color: var(--text);">solution.js</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button id="codeResetStarterBtn" class="btn btn-ghost btn-sm" style="height: 26px; padding: 0 8px; font-size: 0.72rem;">
+            Reset Starter
+          </button>
+        </div>
+      </div>
+      <div class="code-editor-body">
+        <textarea
+          id="codeEditorTextarea"
+          class="code-editor-textarea"
+          spellcheck="false"
+          placeholder="// Write your code here..."
+        ></textarea>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div id="view-activity-math" class="page-view flex-col-fill" style="gap: 20px; padding-bottom: 48px; display: none;">
+
+  <div class="card" style="padding: 24px 28px; background: linear-gradient(135deg, var(--surface), var(--surface-2)); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">QUANT LAB</span>
+        <span style="font-size: 0.72rem; font-weight: 700; color: #fbbf24; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); padding: 2px 8px; border-radius: 999px;">
+          45s Sprint
+        </span>
+      </div>
+      <div class="display-title" style="font-size: 1.45rem; color: var(--text);">Math Clash: Mental Velocity</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <button id="mathStartBtn" class="btn btn-primary btn-sm" style="border-radius: 9999px; gap: 6px;">
+        <i class="fas fa-play"></i> Start Sprint
+      </button>
+      <a href="#/activities" class="btn btn-ghost btn-sm" style="border-radius: 9999px;">Exit</a>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="margin-bottom: 4px;">Score</div>
+      <div id="mathLiveScore" style="font-size: 2rem; font-weight: 800; color: #fbbf24;">0</div>
+    </div>
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="margin-bottom: 4px;">Time Remaining</div>
+      <div id="mathLiveTime" style="font-size: 2rem; font-weight: 800; color: var(--text);">45s</div>
+    </div>
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="margin-bottom: 4px;">Streak</div>
+      <div id="mathLiveStreak" style="font-size: 2rem; font-weight: 800; color: var(--accent-bright);">0 🔥</div>
+    </div>
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="margin-bottom: 4px;">Multiplier</div>
+      <div id="mathLiveMultiplier" style="font-size: 2rem; font-weight: 800; color: #10b981;">1.0x</div>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 280px; text-align: center; gap: 24px;">
+    <div id="mathEquationPrompt" style="font-family: 'JetBrains Mono', monospace; font-size: 2.8rem; font-weight: 800; color: var(--text); letter-spacing: 0.05em;">
+      Press 'Start Sprint'
+    </div>
+
+    <div style="width: 100%; max-width: 320px;">
+      <input
+        id="mathAnswerInput"
+        type="number"
+        class="field"
+        placeholder="Type answer & press Enter"
+        disabled
+        style="height: 52px; font-size: 1.4rem; text-align: center; font-family: 'JetBrains Mono', monospace; border-radius: 14px; font-weight: 700;"
+      />
+    </div>
+
+    <div id="mathFeedbackNote" style="font-size: 0.88rem; color: var(--text-muted); min-height: 20px;">
+      Adaptive calculus, algebra, and rapid arithmetic drills.
+    </div>
+  </div>
+
+</div>
+
+<div id="view-multiplayer" class="page-view flex-col-fill multiplayer-page" style="gap: 16px; padding-bottom: 48px; display: none;">
+
+  <div class="multiplayer-hero-card" style="padding: 26px 28px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+      <div>
+        <div class="multiplayer-hero-pill">
+          <span class="status-dot" style="width: 6px; height: 6px;"></span>
+          <span id="multiplayerSocketStatus">Realtime Lobby Ready</span>
+        </div>
+        <div class="display-title" style="font-size: 1.6rem; color: var(--text);">Battle Net: Real-Time Multiplayer</div>
+        <div style="font-size: 0.88rem; color: var(--text-muted); margin-top: 6px; max-width: 620px; line-height: 1.55;">
+          Create custom private battle rooms or join peer squads with instant room invite codes. Synchronize scores and presence with zero lag.
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div id="currentRoomChip" class="badge" style="font-size: 0.8rem; padding: 6px 14px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border);">
+          Room: <strong id="currentRoomName" style="color: var(--accent-bright); margin-left: 4px;">lobby</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="multiplayer-dashboard-grid">
+
+    <div class="card multiplayer-room-card" style="padding: 24px;">
+      <div class="label-sm" style="margin-bottom: 6px;">Select Preset Arena</div>
+      <div style="font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 14px;">
+        Room Directory
+      </div>
+
+      <div class="multiplayer-presets">
+        <button class="multiplayer-signal-card" data-room-preset="lobby" style="text-align: left; cursor: pointer; border: 1px solid var(--border-hover);">
+          <div style="font-size: 0.88rem; font-weight: 700; color: var(--text);">Main Lobby</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">General hangout room for all active operators.</div>
+        </button>
+        <button class="multiplayer-signal-card" data-room-preset="typing-race" style="text-align: left; cursor: pointer;">
+          <div style="font-size: 0.88rem; font-weight: 700; color: var(--text);">Typing Race</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">Synchronized speed rounds and instant leaderboards.</div>
+        </button>
+        <button class="multiplayer-signal-card" data-room-preset="code-duel" style="text-align: left; cursor: pointer;">
+          <div style="font-size: 0.88rem; font-weight: 700; color: var(--text);">Code Duel</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">Pair programming battles and timed algorithm rounds.</div>
+        </button>
+        <button class="multiplayer-signal-card" data-room-preset="study-squad" style="text-align: left; cursor: pointer;">
+          <div style="font-size: 0.88rem; font-weight: 700; color: var(--text);">Study Squad</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">Shared room for quant drills, grammar, and reading.</div>
+        </button>
+      </div>
+
+      <div style="margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border-subtle);">
+        <div class="label-sm" style="margin-bottom: 8px;">Private Battle Code</div>
+        <div style="display: flex; gap: 8px;">
+          <input
+            id="multiplayerCodeInput"
+            type="text"
+            class="field"
+            placeholder="Enter 6-char Room Code (e.g. AB12CD)"
+            style="text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-weight: 700;"
+          />
+          <button id="multiplayerJoinCodeBtn" class="btn btn-primary btn-sm" style="height: 40px; padding: 0 18px;">
+            Join Room
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card multiplayer-live-card" style="padding: 24px; display: flex; flex-direction: column;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+        <div>
+          <div class="label-sm">Active Peers</div>
+          <div style="font-size: 1.1rem; font-weight: 800; color: var(--text); margin-top: 2px;">
+            Room Presence
+          </div>
+        </div>
+        <span id="multiplayerMemberCountBadge" class="badge" style="background: rgba(34, 197, 94, 0.15); color: #4ade80;">
+          1 Online
+        </span>
+      </div>
+
+      <div id="multiplayerMemberList" class="inner-scroll" style="display: flex; flex-direction: column; gap: 8px; flex: 1; max-height: 280px;">
+        <div class="multiplayer-member-row">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center;">
+              O
+            </div>
+            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text);">You (Operator)</span>
+          </div>
+          <span class="multiplayer-member-chip">Ready</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="grid-column: span 12; padding: 24px; display: flex; flex-direction: column; gap: 14px;">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div class="label-sm">Squad Communications</div>
+        <span style="font-size: 0.75rem; color: var(--text-faint);">Encrypted peer stream</span>
+      </div>
+
+      <div id="multiplayerChatFeed" class="multiplayer-chat-feed inner-scroll" style="padding: 14px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--border-subtle); overflow-y: auto;">
+        <div class="multiplayer-message">
+          <div style="font-size: 0.75rem; color: var(--text-faint); margin-bottom: 2px;">System • Automated Dispatch</div>
+          <div style="font-size: 0.85rem; color: var(--text);">Welcome to the SkillNODE realtime operations deck. Messages sent here reach all peers in your room.</div>
+        </div>
+      </div>
+
+      <div class="multiplayer-chat-form">
+        <input
+          id="multiplayerChatInput"
+          type="text"
+          class="field"
+          placeholder="Type message to room..."
+          style="border-radius: 9999px; padding: 0 18px;"
+        />
+        <button id="multiplayerSendChatBtn" class="btn btn-primary btn-sm" style="border-radius: 9999px; height: 40px; padding: 0 20px;">
+          <i class="fas fa-paper-plane"></i> Send
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div id="view-profile" class="page-view flex-col-fill" style="gap: 20px; padding-bottom: 48px; display: none;">
+
+  <div class="card" style="padding: 32px 36px; background: linear-gradient(135deg, var(--surface), var(--surface-2));">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+      <div style="display: flex; align-items: center; gap: 20px;">
+        
+        <div id="profileAvatarRing" class="avatar-ring" style="width: 80px; height: 80px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          O
+        </div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div id="profileNameDisplay" class="display-title" style="font-size: 1.6rem; color: var(--text);">
+              Operator
+            </div>
+            <span id="profileBadgeDisplay" class="badge" style="background: rgba(147, 51, 234, 0.15); color: var(--accent-bright); font-size: 0.72rem; padding: 3px 8px;">
+              <i class="fas fa-shield-alt"></i> GUEST OPERATOR
+            </span>
+          </div>
+          <div id="profileHandleDisplay" style="font-size: 0.88rem; color: var(--accent-bright); margin-top: 2px; font-weight: 600;">
+            @operator
+          </div>
+          <div id="profileBioDisplay" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; max-width: 520px; line-height: 1.5;">
+            Local-first skill operator. Focused on high-speed execution, algorithmic problem solving, and zero-latency competition.
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button id="profileEditModalBtn" class="btn btn-secondary btn-sm" style="border-radius: 9999px; gap: 6px;">
+          <i class="fas fa-edit"></i> Edit Profile
+        </button>
+        <button id="profileShareBtn" class="btn btn-ghost btn-sm" style="border-radius: 9999px; gap: 6px;">
+          <i class="fas fa-share-alt"></i> Share Card
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+    <div class="metric-box">
+      <div class="label-sm" style="margin-bottom: 4px;">Discipline Focus</div>
+      <div style="font-size: 1.35rem; font-weight: 800; color: var(--text);">Typing & Algorithms</div>
+    </div>
+    <div class="metric-box">
+      <div class="label-sm" style="margin-bottom: 4px;">Top Typing Velocity</div>
+      <div id="profileBestWpm" style="font-size: 1.35rem; font-weight: 800; color: var(--accent-bright);">-- WPM</div>
+    </div>
+    <div class="metric-box">
+      <div class="label-sm" style="margin-bottom: 4px;">Session Accuracy</div>
+      <div id="profileBestAccuracy" style="font-size: 1.35rem; font-weight: 800; color: #10b981;">100%</div>
+    </div>
+    <div class="metric-box">
+      <div class="label-sm" style="margin-bottom: 4px;">Fair-Play Rating</div>
+      <div style="font-size: 1.35rem; font-weight: 800; color: #38bdf8;">100 / 100 (Clean)</div>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 28px;">
+    <div class="label-sm" style="margin-bottom: 12px;">Operator Credentials & Session Info</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+      <div style="padding: 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border-subtle);">
+        <div style="font-size: 0.75rem; color: var(--text-faint);">OPERATOR ID</div>
+        <div id="profileSessionId" style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 600; color: var(--text); margin-top: 4px;">
+          guest-session-local
+        </div>
+      </div>
+      <div style="padding: 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border-subtle);">
+        <div style="font-size: 0.75rem; color: var(--text-faint);">ROLE / PRIVILEGE</div>
+        <div id="profileRoleDisplay" style="font-size: 0.85rem; font-weight: 600; color: var(--accent-bright); margin-top: 4px; text-transform: uppercase;">
+          PLAYER (LOCAL SANDBOX)
+        </div>
+      </div>
+      <div style="padding: 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border-subtle);">
+        <div style="font-size: 0.75rem; color: var(--text-faint);">REGION / NODE</div>
+        <div id="profileRegion" style="font-size: 0.85rem; font-weight: 600; color: var(--text); margin-top: 4px;">
+          Global Edge Node
+        </div>
+      </div>
+      <div style="padding: 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border-subtle);">
+        <div style="font-size: 0.75rem; color: var(--text-faint);">INTEGRITY VAULT</div>
+        <div id="profileVaultStatus" style="font-size: 0.85rem; font-weight: 600; color: #10b981; margin-top: 4px; display: flex; align-items: center; gap: 6px;">
+          <i class="fas fa-lock" style="font-size: 11px;"></i> HMAC-SHA256 Sealed
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+<div id="toastContainer" style="position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; max-width: 380px; pointer-events: none;">
+  
+</div>
+
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    
+    <script src="static/bridge.js?v=1.0.0"></script>
+
+    <script src="wasm/wasm_exec.js?v=1.0.0"></script>
+    <script>
+        (function() {
+            const go = new Go();
+            const wasmUrl = "wasm/app.wasm?v=1.0.0";
+
+            function finishLoading() {
+                const loader = document.getElementById("loadingScreen");
+                if (loader) {
+                    loader.style.opacity = "0";
+                    setTimeout(() => {
+                        loader.style.display = "none";
+                        loader.style.visibility = "hidden";
+                    }, 300);
+                }
+            }
+
+            if (WebAssembly.instantiateStreaming) {
+                WebAssembly.instantiateStreaming(fetch(wasmUrl), go.importObject)
+                    .then((result) => {
+                        go.run(result.instance);
+                        finishLoading();
+                    })
+                    .catch((err) => fallbackLoad(wasmUrl, go));
+            } else {
+                fallbackLoad(wasmUrl, go);
+            }
+
+            function fallbackLoad(url, goInstance) {
+                fetch(url)
+                    .then(resp => {
+                        if (!resp.ok) throw new Error("Network response not ok: " + resp.status);
+                        return resp.arrayBuffer();
+                    })
+                    .then(bytes => WebAssembly.instantiate(bytes, goInstance.importObject))
+                    .then(result => {
+                        goInstance.run(result.instance);
+                        finishLoading();
+                    })
+                    .catch(err => {
+                        console.error("Failed to load SkillNODE Go WebAssembly:", err);
+                        const status = document.getElementById("loadingStatusText");
+                        if (status) {
+                            status.style.color = "#ef4444";
+                            status.innerText = "Error loading WebAssembly engine. Please refresh.";
+                        }
+                    });
+            }
+        })();
+    </script>
+
+</body>
+</html>
