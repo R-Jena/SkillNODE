@@ -14,10 +14,10 @@
     ]
   },
   "ledger": {
-    "last_commit_sha": "d771d83ebcd4d647f66daf9e98437fb11494a69a",
-    "last_commit_message": "feat(deploy): switch Render to Docker runtime and commit pre-compiled client dist for zero-failure Vercel deployment",
+    "last_commit_sha": "13d25ee4b240ff7fcfe1602322bcefe2b8bc7798",
+    "last_commit_message": "chore(dist): track complete pre-compiled Go WASM distribution in client/dist",
     "last_commit_author": "liambrooks-lab",
-    "last_updated_utc": "2026-11-09T05:04:44Z",
+    "last_updated_utc": "2026-11-09T05:05:38Z",
     "build_status": "verified",
     "system_architecture": {
       "frontend_pipeline": "Dynamic Go Templates (.tmpl)",
