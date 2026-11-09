@@ -16,10 +16,10 @@
     ]
   },
   "ledger": {
-    "last_commit_sha": "13d25ee4b240ff7fcfe1602322bcefe2b8bc7798",
-    "last_commit_message": "chore(dist): track complete pre-compiled Go WASM distribution in client/dist",
-    "last_commit_author": "R-Jena",
-    "last_updated_utc": "2026-11-09T05:35:00Z",
+    "last_commit_sha": "54b13e5e0d63cf5ba65eaf5a0f0ba84efa56469d",
+    "last_commit_message": "feat(landing): restore full scrollable landing page, access gateway tabs, and sidebar sign-out",
+    "last_commit_author": "liambrooks-lab",
+    "last_updated_utc": "2026-11-09T05:44:56Z",
     "build_status": "verified",
     "system_architecture": {
       "frontend_pipeline": "Dynamic Go Templates (.tmpl)",
