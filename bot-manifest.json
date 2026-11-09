@@ -14,10 +14,10 @@
     ]
   },
   "ledger": {
-    "last_commit_sha": "3f71427ddabd86ee5f0a0f5cd65d8583f6f4de54",
-    "last_commit_message": "fix(vercel): add root go.mod and go.work pinned to Go 1.22 for Vercel Go runtime detection",
+    "last_commit_sha": "d771d83ebcd4d647f66daf9e98437fb11494a69a",
+    "last_commit_message": "feat(deploy): switch Render to Docker runtime and commit pre-compiled client dist for zero-failure Vercel deployment",
     "last_commit_author": "liambrooks-lab",
-    "last_updated_utc": "2026-11-08T07:02:40Z",
+    "last_updated_utc": "2026-11-09T05:04:44Z",
     "build_status": "verified",
     "system_architecture": {
       "frontend_pipeline": "Dynamic Go Templates (.tmpl)",
