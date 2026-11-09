@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "engines": {
-    "node": "22.x"
+    "node": ">=20.x"
   },
   "scripts": {
     "build": "node --input-type=module -e \"import { readdirSync, statSync } from 'node:fs'; import path from 'node:path'; import { spawnSync } from 'node:child_process'; const walk = (dir) => readdirSync(dir).flatMap((name) => { const full = path.join(dir, name); return statSync(full).isDirectory() ? walk(full) : full.endsWith('.js') ? [full] : []; }); const failed = walk('src').some((file) => spawnSync(process.execPath, ['--check', file], { stdio: 'inherit' }).status !== 0); if (failed) process.exit(1);\"",

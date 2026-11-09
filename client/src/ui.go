@@ -9,7 +9,7 @@ import (
 	"syscall/js"
 )
 
-var currentActiveRoute = "dashboard"
+var currentActiveRoute = "login"
 
 func initUI() {
 	doc := js.Global().Get("document")
@@ -32,12 +32,12 @@ func initUI() {
 	initialHash := js.Global().Get("location").Get("hash").String()
 	cleanRoute := strings.TrimPrefix(initialHash, "#/")
 	cleanRoute = strings.TrimPrefix(cleanRoute, "#")
-	if cleanRoute == "" {
-		cleanRoute = "dashboard"
+	if cleanRoute == "" || !IsSessionAuthenticated() {
+		cleanRoute = "login"
 	}
 	SwitchView(cleanRoute)
 
-	// 5. Theme toggle button listener
+	// 5. Theme toggle button in sidebar
 	themeBtn := doc.Call("getElementById", "toggleThemeBtn")
 	if !themeBtn.IsNull() {
 		themeBtn.Call("addEventListener", "click", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -46,15 +46,20 @@ func initUI() {
 		}))
 	}
 
-	// 6. Auth modal triggers
-	authBtn := doc.Call("getElementById", "authTriggerBtn")
-	if !authBtn.IsNull() {
-		authBtn.Call("addEventListener", "click", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-			openModal("authModalBackdrop")
+	// 6. Logout trigger in sidebar
+	logoutBtn := doc.Call("getElementById", "logoutTriggerBtn")
+	if !logoutBtn.IsNull() {
+		logoutBtn.Call("addEventListener", "click", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			LockSession()
+			renderProfileInfo()
+			triggerToast("Session Locked", "Signed out of SkillNODE arena.", "info")
+			js.Global().Get("location").Set("hash", "#/login")
+			SwitchView("login")
 			return nil
 		}))
 	}
 
+	// 7. Modal close button
 	authCloseBtn := doc.Call("getElementById", "authModalCloseBtn")
 	if !authCloseBtn.IsNull() {
 		authCloseBtn.Call("addEventListener", "click", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -63,19 +68,7 @@ func initUI() {
 		}))
 	}
 
-	guestBtn := doc.Call("getElementById", "authGuestBtn")
-	if !guestBtn.IsNull() {
-		guestBtn.Call("addEventListener", "click", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-			p := createDefaultGuestProfile()
-			saveProfileToStorage(p)
-			renderProfileInfo()
-			closeModal("authModalBackdrop")
-			triggerToast("Session Initialized", "Guest operator profile active.", "success")
-			return nil
-		}))
-	}
-
-	// 7. Profile view edit modal trigger
+	// 8. Profile view edit modal trigger & share
 	editProfileBtn := doc.Call("getElementById", "profileEditModalBtn")
 	if !editProfileBtn.IsNull() {
 		editProfileBtn.Call("addEventListener", "click", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -100,23 +93,256 @@ func initUI() {
 		}))
 	}
 
-	// 8. Bind room presets in multiplayer view
+	// 9. Bind room presets in multiplayer view
 	bindRoomPresetButtons()
+
+	// 10. Bind landing page events (tabs, forms, demo, smooth scrolling)
+	bindLandingEvents()
+}
+
+func bindLandingEvents() {
+	doc := js.Global().Get("document")
+
+	// Smooth scroll helper
+	scrollFn := func(targetID string) js.Func {
+		return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			if len(args) > 0 && !args[0].IsNull() && !args[0].IsUndefined() {
+				args[0].Call("preventDefault")
+			}
+			scrollToElement(targetID)
+			return nil
+		})
+	}
+
+	// Navigation & Banner scroll links
+	bindClick(doc, "landingBannerTrackLink", scrollFn("tracks"))
+	bindClick(doc, "navLinkTracks", scrollFn("tracks"))
+	bindClick(doc, "heroTracksBtn", scrollFn("tracks"))
+	bindClick(doc, "navLinkFeatures", scrollFn("features"))
+	bindClick(doc, "navLinkBenchmarks", scrollFn("benchmarks"))
+	bindClick(doc, "landingNavGetStartedBtn", scrollFn("auth-portal"))
+	bindClick(doc, "heroEnterArenaBtn", scrollFn("auth-portal"))
+	bindClick(doc, "bottomLaunchBtn", scrollFn("auth-portal"))
+
+	// Landing theme toggle button
+	landingThemeBtn := doc.Call("getElementById", "landingThemeBtn")
+	if !landingThemeBtn.IsNull() {
+		landingThemeBtn.Call("addEventListener", "click", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			toggleTheme()
+			return nil
+		}))
+	}
+
+	// Tab switching: Sign In vs Create Account
+	tabSignIn := doc.Call("getElementById", "landingTabSignIn")
+	if !tabSignIn.IsNull() {
+		tabSignIn.Call("addEventListener", "click", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			setLandingAuthMode("signin")
+			return nil
+		}))
+	}
+
+	tabSignUp := doc.Call("getElementById", "landingTabSignUp")
+	if !tabSignUp.IsNull() {
+		tabSignUp.Call("addEventListener", "click", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			setLandingAuthMode("signup")
+			return nil
+		}))
+	}
+
+	// Password visibility toggles
+	bindPasswordToggle("landingLoginTogglePwd", "landingLoginPassword", "landingLoginPwdIcon")
+	bindPasswordToggle("landingSignupTogglePwd", "landingSignupPassword", "landingSignupPwdIcon")
+
+	// Instant Demo Access (0-Click Entry)
+	demoBtn := doc.Call("getElementById", "landingDemoBtn")
+	if !demoBtn.IsNull() {
+		demoBtn.Call("addEventListener", "click", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			LoginWithDemo()
+			renderProfileInfo()
+			triggerToast("Demo Access Granted", "Entering SkillNODE as operator Alex Coder.", "success")
+			js.Global().Get("location").Set("hash", "#/dashboard")
+			SwitchView("dashboard")
+			return nil
+		}))
+	}
+
+	// Sign In Form Submission
+	signInForm := doc.Call("getElementById", "landingSignInForm")
+	if !signInForm.IsNull() {
+		signInForm.Call("addEventListener", "submit", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			if len(args) > 0 {
+				args[0].Call("preventDefault")
+			}
+			uVal := doc.Call("getElementById", "landingLoginUsername").Get("value").String()
+			pVal := doc.Call("getElementById", "landingLoginPassword").Get("value").String()
+
+			_, err := LoginWithCredentials(uVal, pVal)
+			if err != nil {
+				triggerToast("Authentication Failed", err.Error(), "error")
+				return nil
+			}
+
+			renderProfileInfo()
+			triggerToast("Welcome back!", "Authenticated into SkillNODE arena.", "success")
+			js.Global().Get("location").Set("hash", "#/dashboard")
+			SwitchView("dashboard")
+			return nil
+		}))
+	}
+
+	// Sign Up Form Submission
+	signUpForm := doc.Call("getElementById", "landingSignUpForm")
+	if !signUpForm.IsNull() {
+		signUpForm.Call("addEventListener", "submit", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			if len(args) > 0 {
+				args[0].Call("preventDefault")
+			}
+			name := doc.Call("getElementById", "landingSignupName").Get("value").String()
+			username := doc.Call("getElementById", "landingSignupUsername").Get("value").String()
+			email := doc.Call("getElementById", "landingSignupEmail").Get("value").String()
+			region := doc.Call("getElementById", "landingSignupRegion").Get("value").String()
+
+			_, err := CreateAccountProfile(name, username, email, region)
+			if err != nil {
+				triggerToast("Sign-up Failed", err.Error(), "error")
+				return nil
+			}
+
+			renderProfileInfo()
+			triggerToast("Welcome to SkillNODE", "Your professional skill profile is ready.", "success")
+			js.Global().Get("location").Set("hash", "#/dashboard")
+			SwitchView("dashboard")
+			return nil
+		}))
+	}
+}
+
+func bindClick(doc js.Value, id string, fn js.Func) {
+	el := doc.Call("getElementById", id)
+	if !el.IsNull() {
+		el.Call("addEventListener", "click", fn)
+	}
+}
+
+func scrollToElement(id string) {
+	doc := js.Global().Get("document")
+	el := doc.Call("getElementById", id)
+	if !el.IsNull() {
+		opt := js.Global().Get("Object").New()
+		opt.Set("behavior", "smooth")
+		opt.Set("block", "start")
+		el.Call("scrollIntoView", opt)
+	}
+}
+
+func setLandingAuthMode(mode string) {
+	doc := js.Global().Get("document")
+	tabSignIn := doc.Call("getElementById", "landingTabSignIn")
+	tabSignUp := doc.Call("getElementById", "landingTabSignUp")
+	formSignIn := doc.Call("getElementById", "landingSignInForm")
+	formSignUp := doc.Call("getElementById", "landingSignUpForm")
+	title := doc.Call("getElementById", "landingAuthTitle")
+
+	if mode == "signin" {
+		if !tabSignIn.IsNull() {
+			tabSignIn.Get("style").Set("background", "var(--btn-bg)")
+			tabSignIn.Get("style").Set("color", "#fff")
+		}
+		if !tabSignUp.IsNull() {
+			tabSignUp.Get("style").Set("background", "transparent")
+			tabSignUp.Get("style").Set("color", "var(--text-muted)")
+		}
+		if !formSignIn.IsNull() {
+			formSignIn.Get("style").Set("display", "flex")
+		}
+		if !formSignUp.IsNull() {
+			formSignUp.Get("style").Set("display", "none")
+		}
+		if !title.IsNull() {
+			title.Set("innerText", "Sign in to SkillNODE")
+		}
+	} else {
+		if !tabSignIn.IsNull() {
+			tabSignIn.Get("style").Set("background", "transparent")
+			tabSignIn.Get("style").Set("color", "var(--text-muted)")
+		}
+		if !tabSignUp.IsNull() {
+			tabSignUp.Get("style").Set("background", "var(--btn-bg)")
+			tabSignUp.Get("style").Set("color", "#fff")
+		}
+		if !formSignIn.IsNull() {
+			formSignIn.Get("style").Set("display", "none")
+		}
+		if !formSignUp.IsNull() {
+			formSignUp.Get("style").Set("display", "flex")
+		}
+		if !title.IsNull() {
+			title.Set("innerText", "Create Operator Profile")
+		}
+	}
+}
+
+func bindPasswordToggle(btnID, inputID, iconID string) {
+	doc := js.Global().Get("document")
+	btn := doc.Call("getElementById", btnID)
+	input := doc.Call("getElementById", inputID)
+	icon := doc.Call("getElementById", iconID)
+	if btn.IsNull() || input.IsNull() {
+		return
+	}
+	btn.Call("addEventListener", "click", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		curr := input.Get("type").String()
+		if curr == "password" {
+			input.Set("type", "text")
+			if !icon.IsNull() {
+				icon.Set("className", "fas fa-eye-slash")
+			}
+		} else {
+			input.Set("type", "password")
+			if !icon.IsNull() {
+				icon.Set("className", "fas fa-eye")
+			}
+		}
+		return nil
+	}))
 }
 
 func SwitchView(route string) {
 	route = strings.TrimPrefix(route, "#/")
 	route = strings.TrimPrefix(route, "#")
 	route = strings.TrimPrefix(route, "/")
-	if route == "" {
-		route = "dashboard"
-	}
-	currentActiveRoute = route
 
 	doc := js.Global().Get("document")
+	landingView := doc.Call("getElementById", "view-landing")
+	appShell := doc.Call("getElementById", "root")
 
-	// Hide all views
-	views := doc.Call("querySelectorAll", ".page-view")
+	// If visitor is unauthenticated or explicitly requesting the login / landing route
+	if route == "login" || route == "" || !IsSessionAuthenticated() {
+		currentActiveRoute = "login"
+		if !landingView.IsNull() {
+			landingView.Get("style").Set("display", "flex")
+			landingView.Set("scrollTop", 0)
+		}
+		if !appShell.IsNull() {
+			appShell.Get("style").Set("display", "none")
+		}
+		doc.Set("title", "SkillNODE")
+		return
+	}
+
+	// User is authenticated and navigating inside the arena
+	currentActiveRoute = route
+	if !landingView.IsNull() {
+		landingView.Get("style").Set("display", "none")
+	}
+	if !appShell.IsNull() {
+		appShell.Get("style").Set("display", "flex")
+	}
+	doc.Set("title", "SkillNODE")
+
+	// Hide all views inside pageFrame
+	views := doc.Call("querySelectorAll", "#pageFrame .page-view")
 	vCount := views.Get("length").Int()
 	for i := 0; i < vCount; i++ {
 		views.Index(i).Get("style").Set("display", "none")
@@ -213,6 +439,23 @@ func applyStoredTheme() {
 			icon.Set("className", "fas fa-moon")
 		}
 	}
+
+	landingIcon := doc.Call("getElementById", "landingThemeIcon")
+	landingLabel := doc.Call("getElementById", "landingThemeLabel")
+	if !landingIcon.IsNull() {
+		if strings.Contains(theme, "light") {
+			landingIcon.Set("className", "fas fa-sun")
+		} else {
+			landingIcon.Set("className", "fas fa-moon")
+		}
+	}
+	if !landingLabel.IsNull() {
+		if strings.Contains(theme, "light") {
+			landingLabel.Set("innerText", "Light")
+		} else {
+			landingLabel.Set("innerText", "Dark")
+		}
+	}
 }
 
 func toggleTheme() {
@@ -226,15 +469,7 @@ func toggleTheme() {
 
 	doc.Get("documentElement").Call("setAttribute", "data-theme", newTheme)
 	SetStoredTheme(newTheme)
-
-	icon := doc.Call("getElementById", "themeIcon")
-	if !icon.IsNull() {
-		if strings.Contains(newTheme, "light") {
-			icon.Set("className", "fas fa-sun")
-		} else {
-			icon.Set("className", "fas fa-moon")
-		}
-	}
+	applyStoredTheme()
 
 	triggerToast("Theme Updated", fmt.Sprintf("Active theme: %s", newTheme), "info")
 }
@@ -359,5 +594,3 @@ func setElementText(doc js.Value, id, text string) {
 		el.Set("innerText", text)
 	}
 }
-
-

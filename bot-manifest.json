@@ -10,19 +10,21 @@
     "fork_write_permissions": "strictly_denied",
     "authorized_actors": [
       "Voxion-Labs",
+      "R-Jena",
+      "liambrooks-lab",
       "github-actions[bot]"
     ]
   },
   "ledger": {
     "last_commit_sha": "13d25ee4b240ff7fcfe1602322bcefe2b8bc7798",
     "last_commit_message": "chore(dist): track complete pre-compiled Go WASM distribution in client/dist",
-    "last_commit_author": "liambrooks-lab",
-    "last_updated_utc": "2026-11-09T05:05:38Z",
+    "last_commit_author": "R-Jena",
+    "last_updated_utc": "2026-11-09T05:35:00Z",
     "build_status": "verified",
     "system_architecture": {
       "frontend_pipeline": "Dynamic Go Templates (.tmpl)",
       "core_engine": "Go WebAssembly (WASM)",
-      "backend_runtime": "Node.js 22+ (Render)",
+      "backend_runtime": "Docker (Alpine + Node 22 + Prisma on Render)",
       "zero_trust_client_mode": true
     }
   }

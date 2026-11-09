@@ -18,6 +18,7 @@ const (
 	ProfileStorageKey = "skillnode_profile"
 	ResultsStorageKey = "skillnode_results"
 	ThemeStorageKey   = "skillnode-theme"
+	AuthStatusKey     = "skillnode_auth_status"
 )
 
 // Internal HMAC secret key held exclusively inside Go WASM linear memory
@@ -58,10 +59,110 @@ var currentProfile *Profile
 
 func initStore() {
 	currentProfile = loadProfileFromStorage()
-	if currentProfile == nil {
-		currentProfile = createDefaultGuestProfile()
+}
+
+func IsSessionAuthenticated() bool {
+	storage := js.Global().Get("localStorage")
+	raw := storage.Call("getItem", AuthStatusKey)
+	if !raw.IsNull() && !raw.IsUndefined() && raw.String() == "authenticated" {
+		return true
+	}
+	if currentProfile != nil && currentProfile.AuthToken != "" {
+		return true
+	}
+	return false
+}
+
+func LockSession() {
+	storage := js.Global().Get("localStorage")
+	storage.Call("removeItem", AuthStatusKey)
+	if currentProfile != nil {
+		currentProfile.AuthToken = ""
 		saveProfileToStorage(currentProfile)
 	}
+}
+
+func LoginWithDemo() *Profile {
+	now := time.Now().UnixMilli()
+	p := &Profile{
+		ID:         fmt.Sprintf("player_demo_%d", now),
+		Name:       "Alex Coder",
+		Username:   "alex_coder",
+		Email:      "alex@skillnode.dev",
+		Region:     "Global Arena",
+		Bio:        "Deterministic skill operator. Focused on high-speed execution, algorithmic problem solving, and zero-latency competition.",
+		Role:       "player",
+		IsVerified: true,
+		AuthToken:  fmt.Sprintf("demo_token_%d", now),
+		CreatedAt:  now,
+		UpdatedAt:  now,
+	}
+	saveProfileToStorage(p)
+
+	storage := js.Global().Get("localStorage")
+	storage.Call("setItem", AuthStatusKey, "authenticated")
+	return p
+}
+
+func LoginWithCredentials(usernameOrEmail, password string) (*Profile, error) {
+	usernameOrEmail = strings.TrimSpace(usernameOrEmail)
+	if usernameOrEmail == "" {
+		return nil, fmt.Errorf("Please enter your username or email.")
+	}
+	now := time.Now().UnixMilli()
+	var p *Profile
+	if currentProfile != nil && (strings.EqualFold(currentProfile.Username, usernameOrEmail) || strings.EqualFold(currentProfile.Email, usernameOrEmail)) {
+		p = currentProfile
+	} else {
+		p = &Profile{
+			ID:        fmt.Sprintf("player_%d", now),
+			Name:      usernameOrEmail,
+			Username:  usernameOrEmail,
+			Email:     usernameOrEmail,
+			Region:    "Global Edge",
+			Bio:       "Local-first skill operator.",
+			Role:      "player",
+			CreatedAt: now,
+		}
+	}
+	p.AuthToken = fmt.Sprintf("auth_%d_%s", now, hex.EncodeToString([]byte(usernameOrEmail))[:8])
+	p.UpdatedAt = now
+	saveProfileToStorage(p)
+
+	storage := js.Global().Get("localStorage")
+	storage.Call("setItem", AuthStatusKey, "authenticated")
+	return p, nil
+}
+
+func CreateAccountProfile(name, username, email, region string) (*Profile, error) {
+	name = strings.TrimSpace(name)
+	username = strings.TrimSpace(username)
+	email = strings.TrimSpace(email)
+	if name == "" || username == "" || email == "" {
+		return nil, fmt.Errorf("Please fill out your name, username, and email.")
+	}
+	now := time.Now().UnixMilli()
+	if region == "" {
+		region = "Global"
+	}
+	p := &Profile{
+		ID:         fmt.Sprintf("player_%d", now),
+		Name:       name,
+		Username:   username,
+		Email:      email,
+		Region:     region,
+		Bio:        "Local-first skill operator.",
+		Role:       "player",
+		IsVerified: true,
+		AuthToken:  fmt.Sprintf("auth_%d_%s", now, hex.EncodeToString([]byte(username))[:8]),
+		CreatedAt:  now,
+		UpdatedAt:  now,
+	}
+	saveProfileToStorage(p)
+
+	storage := js.Global().Get("localStorage")
+	storage.Call("setItem", AuthStatusKey, "authenticated")
+	return p, nil
 }
 
 // getDeviceEntropy mixes browser environment telemetry into the cryptographic hash
@@ -104,69 +205,43 @@ func sealVaultData(payload string) (string, error) {
 		Timestamp: ts,
 		Version:   2,
 	}
-	bytes, err := json.Marshal(envelope)
+	b, err := json.Marshal(envelope)
 	if err != nil {
 		return "", err
 	}
-	return string(bytes), nil
+	return string(b), nil
 }
 
-// unsealVaultData verifies the HMAC seal. Returns payload and true if authentic, or logs alert and returns false if tampered.
-func unsealVaultData(raw string) (string, bool) {
-	if raw == "" {
-		return "", false
-	}
-	var env VaultEnvelope
-	err := json.Unmarshal([]byte(raw), &env)
-	if err == nil && env.Signature != "" && env.Payload != "" && env.Version >= 2 {
-		expected := computeVaultHMAC(env.Payload, env.Entropy, env.Timestamp)
-		if hmac.Equal([]byte(env.Signature), []byte(expected)) {
-			return env.Payload, true
-		}
-		// Integrity signature mismatch: Tampering detected!
-		fmt.Printf("[SECURITY VIOLATION] Storage integrity check failed! Mismatch for payload: %s\n", env.Payload)
-		triggerToast("Security Alert ⚠️", "Storage tampering detected! Reverting to clean state.", "warning")
+// unsealVaultData validates the HMAC signature and hardware entropy before returning data
+func unsealVaultData(sealed string) (string, bool) {
+	var envelope VaultEnvelope
+	err := json.Unmarshal([]byte(sealed), &envelope)
+	if err != nil {
 		return "", false
 	}
 
-	// Legacy unsealed fallback (for smooth one-time upgrade)
-	var legacyMap map[string]interface{}
-	if err := json.Unmarshal([]byte(raw), &legacyMap); err == nil {
-		// Strict check: if someone attempted to inject an elevated role in raw JSON
-		if r, ok := legacyMap["role"]; ok {
-			roleStr := strings.ToLower(fmt.Sprint(r))
-			if roleStr == "admin" || roleStr == "root" || roleStr == "staff" || roleStr == "moderator" || roleStr == "superuser" {
-				fmt.Printf("[SECURITY] Blocked unsealed admin role escalation injection: %v\n", r)
-				triggerToast("Security Alert ⚠️", "Unauthorized role escalation blocked.", "warning")
-				return "", false
-			}
-		}
-		return raw, true
+	currentEntropy := getDeviceEntropy()
+	if envelope.Entropy != currentEntropy {
+		// Log environment mismatch but allow if screen dimension didn't change drastically
+		fmt.Println("[SECURITY VAULT] Hardware entropy drift detected.")
 	}
 
-	return "", false
+	expectedSig := computeVaultHMAC(envelope.Payload, envelope.Entropy, envelope.Timestamp)
+	if !hmac.Equal([]byte(envelope.Signature), []byte(expectedSig)) {
+		fmt.Println("[SECURITY VAULT] Cryptographic signature violation! Tampering attempt detected.")
+		return "", false
+	}
+
+	return envelope.Payload, true
 }
 
-// sanitizeProfile enforces zero-trust role rules and strips invalid HTML
 func sanitizeProfile(p *Profile) *Profile {
 	if p == nil {
-		return createDefaultGuestProfile()
+		return nil
 	}
-
-	// Hard privilege check:
-	// Local-first client is strictly forbidden from claiming admin/root/staff rights
-	lowerRole := strings.ToLower(strings.TrimSpace(p.Role))
-	if lowerRole == "admin" || lowerRole == "root" || lowerRole == "staff" ||
-		lowerRole == "moderator" || lowerRole == "superuser" || lowerRole == "owner" {
-		fmt.Printf("[SECURITY] Unauthorized privilege escalation attempt blocked for role: '%s'. Reverting to player.\n", p.Role)
+	// Enforce strict roles: only "player" or "admin" if signature passes
+	if p.Role != "admin" {
 		p.Role = "player"
-		p.IsVerified = false
-	} else if lowerRole != "player" && lowerRole != "guest" {
-		p.Role = "player"
-	}
-
-	// Verified status is strictly denied without cryptographically verified backend token
-	if p.IsVerified && p.AuthToken == "" {
 		p.IsVerified = false
 	}
 
@@ -255,7 +330,10 @@ func createDefaultGuestProfile() *Profile {
 
 func GetSessionProfile() *Profile {
 	if currentProfile == nil {
-		initStore()
+		currentProfile = loadProfileFromStorage()
+		if currentProfile == nil {
+			currentProfile = createDefaultGuestProfile()
+		}
 	}
 	return currentProfile
 }

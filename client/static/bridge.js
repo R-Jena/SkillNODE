@@ -76,10 +76,13 @@
       }
     },
 
-    // Get current hash route (e.g. "dashboard", "activities/typing")
+    // Get current hash route (e.g. "login", "dashboard", "activities/typing")
     getCurrentRoute: function () {
-      const hash = window.location.hash || "#/dashboard";
-      return hash.replace(/^#\/?/, "") || "dashboard";
+      const hash = window.location.hash;
+      if (!hash || hash === "#" || hash === "#/") {
+        return "login";
+      }
+      return hash.replace(/^#\/?/, "") || "login";
     },
 
     // Set route programmatically

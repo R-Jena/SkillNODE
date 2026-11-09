@@ -5,7 +5,9 @@
 {{template "loading" .}}
 {{template "auth_modal" .}}
 
-    <div id="root" class="app-shell" style="display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; width: 100%;">
+{{template "landing" .}}
+
+    <div id="root" class="app-shell" style="display: none; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; width: 100%;">
         {{template "app_header" .}}
 
         <div style="display: flex; flex: 1; min-height: 0; overflow: hidden; width: 100%;">

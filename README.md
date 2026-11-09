@@ -69,6 +69,7 @@ SkillNODE/
 │   │   ├── typing.go           # High-precision typing cadence & diff engine
 │   │   └── ui.go               # SPA routing, theme coordinator, dynamic DOM bindings
 │   ├── templates/              # Go html/template source files
+│   │   ├── landing.tmpl        # Scrollable landing page, Flutter banner, gateway portal
 │   │   ├── head.tmpl           # Metadata, fonts, and favicon configuration
 │   │   ├── styles.tmpl         # Purged monolithic CSS stylesheet (40.8 KB)
 │   │   ├── layout.tmpl         # Base viewport frame and shell wrappers
