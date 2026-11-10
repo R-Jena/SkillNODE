@@ -1,0 +1,176 @@
+{{define "arena_guess"}}
+<div id="view-activity-guess" class="page-view flex-col-fill" style="gap: 20px; padding-bottom: 48px; display: none;">
+
+  <!-- Hero Header -->
+  <div class="card" style="padding: 24px 28px; background: linear-gradient(135deg, var(--surface), var(--surface-2)); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span class="badge" style="background: rgba(236, 72, 153, 0.15); color: #f472b6;">LOGIC LAB</span>
+        <span style="font-size: 0.72rem; font-weight: 700; color: #f472b6; background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.2); padding: 2px 8px; border-radius: 999px;">
+          Heuristics & Deduction
+        </span>
+      </div>
+      <div class="display-title" style="font-size: 1.45rem; color: var(--text);">Guess Works: Intuition & Heuristic Engine</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <a href="#/activities" class="btn btn-ghost btn-sm" style="border-radius: 9999px;">Exit</a>
+    </div>
+  </div>
+
+  <!-- Mode Selector Tabs -->
+  <div class="page-tabs" style="border-radius: 12px; padding: 6px; overflow-x: auto;">
+    <button class="page-tab active" data-guess-tab="fermi">Fermi Estimation</button>
+    <button class="page-tab" data-guess-tab="binary">Binary Search (1–1,000)</button>
+    <button class="page-tab" data-guess-tab="word">Cryptic Tech Word</button>
+  </div>
+
+  <!-- ── 1. Fermi Estimation Panel ── -->
+  <div id="panel-guess-fermi" style="display: flex; flex-direction: column; gap: 18px;">
+    <!-- HUD -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
+      <div class="metric-box" style="text-align: center;">
+        <div class="label-sm" style="margin-bottom: 4px;">Score</div>
+        <div id="fermiLiveScore" style="font-size: 2rem; font-weight: 800; color: #f472b6;">0</div>
+      </div>
+      <div class="metric-box" style="text-align: center;">
+        <div class="label-sm" style="margin-bottom: 4px;">Progress</div>
+        <div id="fermiProgress" style="font-size: 1.25rem; font-weight: 700; color: var(--text); padding-top: 6px;">Question 1</div>
+      </div>
+      <div class="metric-box" style="text-align: center;">
+        <div class="label-sm" style="margin-bottom: 4px;">Unit</div>
+        <div id="fermiUnitLabel" style="font-size: 1.25rem; font-weight: 700; color: var(--accent-bright); padding-top: 6px;">Units: -</div>
+      </div>
+    </div>
+
+    <!-- Question Card -->
+    <div class="card" style="padding: 36px 32px; display: flex; flex-direction: column; gap: 20px;">
+      <div>
+        <div class="label-sm" style="color: #f472b6; margin-bottom: 8px;">Fermi Estimation Challenge</div>
+        <div id="fermiPrompt" style="font-size: 1.35rem; font-weight: 800; color: var(--text); line-height: 1.5;">
+          Loading estimation prompt...
+        </div>
+        <div id="fermiContext" style="font-size: 0.88rem; color: var(--text-muted); margin-top: 6px;">
+          Contextual info
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; max-width: 440px; width: 100%;">
+        <input
+          id="fermiInput"
+          type="number"
+          step="any"
+          class="field"
+          placeholder="Enter numeric estimate..."
+          style="font-size: 1.1rem; height: 46px; border-radius: 12px; font-weight: 700;"
+        />
+        <button id="fermiSubmitBtn" class="btn btn-primary btn-sm" style="height: 46px; padding: 0 20px; border-radius: 12px;">
+          Submit Guess
+        </button>
+        <button id="fermiNextBtn" class="btn btn-secondary btn-sm" style="height: 46px; padding: 0 20px; border-radius: 12px; display: none;">
+          Next Challenge →
+        </button>
+      </div>
+
+      <div id="fermiFeedback">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 2. Binary Search Panel ── -->
+  <div id="panel-guess-binary" style="display: none; flex-direction: column; gap: 18px;">
+    <!-- HUD -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+      <div class="metric-box" style="text-align: center;">
+        <div class="label-sm" style="margin-bottom: 4px;">Active Interval</div>
+        <div id="binTargetRange" style="font-size: 1.3rem; font-weight: 800; color: #f472b6;">Range: 1 – 1,000</div>
+      </div>
+      <div class="metric-box" style="text-align: center;">
+        <div class="label-sm" style="margin-bottom: 4px;">Attempts</div>
+        <div id="binGuessCount" style="font-size: 1.3rem; font-weight: 800; color: var(--text);">0 guesses</div>
+      </div>
+      <div class="metric-box" style="text-align: center;">
+        <div class="label-sm" style="margin-bottom: 4px;">Optimal Strategy</div>
+        <div style="font-size: 1.3rem; font-weight: 800; color: #10b981;">≤ 10 steps</div>
+      </div>
+    </div>
+
+    <!-- Binary Search Interactive Area -->
+    <div class="card" style="padding: 32px; display: flex; flex-direction: column; gap: 20px;">
+      <div>
+        <div class="label-sm" style="color: #f472b6; margin-bottom: 6px;">Entropy Search Arena</div>
+        <div style="font-size: 1.15rem; font-weight: 800; color: var(--text);">
+          Deduce the secret number between 1 and 1,000 with minimum comparisons.
+        </div>
+        <div id="binSearchStatus" style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">
+          Enter a number between 1 and 1,000 to begin binary search deduction.
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; max-width: 440px; width: 100%;">
+        <input
+          id="binInput"
+          type="number"
+          min="1"
+          max="1000"
+          class="field"
+          placeholder="Guess (1 - 1000)..."
+          style="font-size: 1.1rem; height: 46px; border-radius: 12px; font-weight: 700; text-align: center;"
+        />
+        <button id="binarySubmitBtn" class="btn btn-primary btn-sm" style="height: 46px; padding: 0 20px; border-radius: 12px;">
+          Test Value
+        </button>
+        <button id="binaryResetBtn" class="btn btn-ghost btn-sm" style="height: 46px; padding: 0 16px; border-radius: 12px;">
+          New Number
+        </button>
+      </div>
+
+      <div style="margin-top: 8px;">
+        <div class="label-sm" style="margin-bottom: 8px;">Attempt Audit Feed</div>
+        <div id="binLogFeed" class="inner-scroll" style="display: flex; flex-direction: column; gap: 6px; max-height: 220px;">
+          <!-- Entries rendered via WASM -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 3. Cryptic Word Panel ── -->
+  <div id="panel-guess-word" style="display: none; flex-direction: column; gap: 18px;">
+    <div class="card" style="padding: 32px; display: flex; flex-direction: column; gap: 20px;">
+      <div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+          <span class="label-sm" style="color: #f472b6;">Word Deduction Challenge</span>
+          <span id="wordLengthHint" class="badge" style="background: rgba(236, 72, 153, 0.15); color: #f472b6;">Length: -</span>
+        </div>
+        <div id="wordCluePrompt" style="font-size: 1.25rem; font-weight: 700; color: var(--text); line-height: 1.5;">
+          Loading clue...
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; max-width: 440px; width: 100%;">
+        <input
+          id="wordInput"
+          type="text"
+          class="field"
+          placeholder="Type keyword..."
+          style="font-size: 1.1rem; height: 46px; border-radius: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-family: monospace;"
+        />
+        <button id="wordSubmitBtn" class="btn btn-primary btn-sm" style="height: 46px; padding: 0 20px; border-radius: 12px;">
+          Verify
+        </button>
+        <button id="wordResetBtn" class="btn btn-ghost btn-sm" style="height: 46px; padding: 0 16px; border-radius: 12px;">
+          Next Word
+        </button>
+      </div>
+
+      <div>
+        <div class="label-sm" style="margin-bottom: 8px;">Deduction Grid</div>
+        <div id="wordLogFeed" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{{end}}

@@ -378,6 +378,21 @@ func SwitchView(route string) {
 		viewTitle = "Quant Lab: Math Clash"
 		navKey = "activities"
 		initMathView()
+	case strings.HasPrefix(route, "activities/guess"):
+		targetViewID = "view-activity-guess"
+		viewTitle = "Logic Lab: Guess Works"
+		navKey = "activities"
+		initGuessView()
+	case strings.HasPrefix(route, "activities/grammar"):
+		targetViewID = "view-activity-grammar"
+		viewTitle = "Language Lab: Grammar Edge"
+		navKey = "activities"
+		initGrammarView()
+	case strings.HasPrefix(route, "activities/reading") || strings.HasPrefix(route, "activities/comprehension"):
+		targetViewID = "view-activity-reading"
+		viewTitle = "Cognitive Lab: Reading Intel"
+		navKey = "activities"
+		initReadingView()
 	case strings.HasPrefix(route, "multiplayer"):
 		targetViewID = "view-multiplayer"
 		viewTitle = "Battle Net: Real-Time Multiplayer"

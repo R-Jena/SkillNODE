@@ -352,11 +352,9 @@ func validateResultFairPlay(r Result) bool {
 			return false
 		}
 	}
-	// Math clash sanity limit (45s sprint, each question takes > 500ms)
-	if r.ActivityType == "math" {
-		if r.Score > 100.0 {
-			return false
-		}
+	// General upper limit for cognitive/sprint tracks
+	if r.Score > 100000.0 {
+		return false
 	}
 	// Timestamp within reasonable range
 	now := time.Now().UnixMilli()

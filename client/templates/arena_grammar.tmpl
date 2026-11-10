@@ -1,0 +1,80 @@
+{{define "arena_grammar"}}
+<div id="view-activity-grammar" class="page-view flex-col-fill" style="gap: 20px; padding-bottom: 48px; display: none;">
+
+  <!-- Hero Header -->
+  <div class="card" style="padding: 24px 28px; background: linear-gradient(135deg, var(--surface), var(--surface-2)); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">LANGUAGE LAB</span>
+        <span style="font-size: 0.72rem; font-weight: 700; color: #c084fc; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2); padding: 2px 8px; border-radius: 999px;">
+          Syntax & Style
+        </span>
+      </div>
+      <div class="display-title" style="font-size: 1.45rem; color: var(--text);">Grammar Edge: Syntax & Style Engine</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <button id="grammarStartBtn" class="btn btn-primary btn-sm" style="border-radius: 9999px; gap: 6px;">
+        <i class="fas fa-play"></i> Start Session
+      </button>
+      <a href="#/activities" class="btn btn-ghost btn-sm" style="border-radius: 9999px;">Exit</a>
+    </div>
+  </div>
+
+  <!-- HUD: Score, Accuracy, Streak, Multiplier -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="margin-bottom: 4px;">Score</div>
+      <div id="grammarLiveScore" style="font-size: 2rem; font-weight: 800; color: #c084fc;">0</div>
+    </div>
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="margin-bottom: 4px;">Accuracy</div>
+      <div id="grammarLiveAccuracy" style="font-size: 2rem; font-weight: 800; color: #10b981;">100%</div>
+    </div>
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="margin-bottom: 4px;">Streak</div>
+      <div id="grammarLiveStreak" style="font-size: 2rem; font-weight: 800; color: var(--accent-bright);">0 🔥</div>
+    </div>
+    <div class="metric-box" style="text-align: center;">
+      <div class="label-sm" style="margin-bottom: 4px;">Multiplier</div>
+      <div id="grammarLiveMultiplier" style="font-size: 2rem; font-weight: 800; color: #38bdf8;">1.0x</div>
+    </div>
+  </div>
+
+  <!-- Main Question Surface -->
+  <div class="card" style="padding: 36px 32px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px;">
+      <span id="grammarCategoryBadge" class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">
+        Grammar Focus
+      </span>
+      <span id="grammarProgressText" style="font-size: 0.8rem; color: var(--text-faint); font-weight: 600;">
+        Question 1 of 30
+      </span>
+    </div>
+
+    <div>
+      <div id="grammarPrompt" style="font-size: 1.25rem; font-weight: 700; color: var(--text); line-height: 1.6;">
+        Click 'Start Session' to test grammatical discernment and syntactical precision.
+      </div>
+    </div>
+
+    <!-- Options Container -->
+    <div id="grammarOptionsContainer">
+      <!-- Options rendered via Go WASM -->
+    </div>
+
+    <!-- Feedback and Explanation -->
+    <div id="grammarFeedbackNote">
+      <div style="font-size: 0.85rem; color: var(--text-faint);">
+        30+ curated questions covering conciseness, agreement, subjunctive clauses, and technical mechanics.
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+      <button id="grammarNextBtn" class="btn btn-primary btn-sm" style="display: none; border-radius: 9999px; height: 38px; padding: 0 20px;">
+        Next Question →
+      </button>
+    </div>
+  </div>
+
+</div>
+{{end}}
