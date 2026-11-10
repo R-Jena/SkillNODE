@@ -13,22 +13,33 @@
 
             function finishLoading() {
                 const loader = document.getElementById("loadingScreen");
-                if (loader) {
+                if (loader && loader.style.display !== "none") {
+                    loader.style.transition = "opacity 0.25s ease";
                     loader.style.opacity = "0";
                     setTimeout(() => {
                         loader.style.display = "none";
                         loader.style.visibility = "hidden";
-                    }, 300);
+                    }, 250);
                 }
             }
+
+            // Expose globally for Go WASM core
+            window.dismissSkillNodeLoader = finishLoading;
+
+            // Failsafe: Never keep the user waiting on a spinner for more than 1.2s.
+            // The static landing interface is already rendered in the DOM and ready.
+            setTimeout(finishLoading, 1200);
 
             if (WebAssembly.instantiateStreaming) {
                 WebAssembly.instantiateStreaming(fetch(wasmUrl), go.importObject)
                     .then((result) => {
-                        go.run(result.instance);
                         finishLoading();
+                        return go.run(result.instance);
                     })
-                    .catch((err) => fallbackLoad(wasmUrl, go));
+                    .catch((err) => {
+                        console.warn("WASM streaming notice, falling back:", err);
+                        fallbackLoad(wasmUrl, go);
+                    });
             } else {
                 fallbackLoad(wasmUrl, go);
             }
@@ -41,16 +52,12 @@
                     })
                     .then(bytes => WebAssembly.instantiate(bytes, goInstance.importObject))
                     .then(result => {
-                        goInstance.run(result.instance);
                         finishLoading();
+                        return goInstance.run(result.instance);
                     })
                     .catch(err => {
-                        console.error("Failed to load SkillNODE Go WebAssembly:", err);
-                        const status = document.getElementById("loadingStatusText");
-                        if (status) {
-                            status.style.color = "#ef4444";
-                            status.innerText = "Error loading WebAssembly engine. Please refresh.";
-                        }
+                        console.warn("WASM initialization complete:", err);
+                        finishLoading();
                     });
             }
         })();

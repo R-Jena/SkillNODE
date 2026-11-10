@@ -1,7 +1,7 @@
 {{define "loading"}}
     <!-- Loading Screen (SkillNODE Minimalist Glass Loader) -->
-    <div id="loadingScreen" class="loading-screen" style="position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: var(--bg); transition: opacity 0.3s ease, visibility 0.3s ease;">
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 32px 40px; border-radius: 24px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--card-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); text-align: center; max-width: 90vw;">
+    <div id="loadingScreen" class="loading-screen" onclick="window.dismissSkillNodeLoader && window.dismissSkillNodeLoader()" style="position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: var(--bg); transition: opacity 0.25s ease, visibility 0.25s ease; cursor: pointer;" title="Click to skip loader">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 32px 40px; border-radius: 24px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--card-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); text-align: center; max-width: 90vw; pointer-events: none;">
             <div style="position: relative; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;">
                 <img src="logo.png" alt="SkillNODE logo" style="width: 36px; height: 36px; border-radius: 10px; object-fit: contain;">
                 <div style="position: absolute; inset: 0; border: 3px solid var(--border-subtle); border-top-color: var(--accent); border-radius: 50%; animation: spin-slow 1.2s linear infinite;"></div>

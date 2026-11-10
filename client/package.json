@@ -1,6 +1,6 @@
 {
   "name": "skillnode-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "SkillNODE - Operator Velocity & Cognitive Gaming Platform powered by Go WebAssembly",
   "main": "index.html",
   "type": "module",

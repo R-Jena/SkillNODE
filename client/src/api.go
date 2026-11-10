@@ -29,6 +29,10 @@ func SyncResultToBackend(r Result) {
 
 	// Non-blocking browser fetch
 	go func() {
+		defer func() {
+			_ = recover()
+		}()
+
 		opts := js.Global().Get("Object").New()
 		opts.Set("method", "POST")
 
@@ -37,7 +41,10 @@ func SyncResultToBackend(r Result) {
 		opts.Set("headers", headers)
 		opts.Set("body", string(data))
 
-		js.Global().Call("fetch", apiURL, opts)
+		promise := js.Global().Call("fetch", apiURL, opts)
+		promise.Call("catch", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			return nil
+		}))
 	}()
 }
 
@@ -45,11 +52,19 @@ func CheckBackendHealth() {
 	apiURL := getAPIBaseURL() + "/healthz"
 
 	go func() {
+		defer func() {
+			_ = recover()
+		}()
+
 		promise := js.Global().Call("fetch", apiURL)
 		promise.Call("then", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 			if len(args) > 0 && args[0].Get("ok").Bool() {
 				fmt.Println("SkillNODE Render API Status: Online & Healthy")
 			}
+			return nil
+		}))
+		promise.Call("catch", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			// Backend is asleep or standby - handled silently without throwing
 			return nil
 		}))
 	}()

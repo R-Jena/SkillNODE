@@ -26,7 +26,7 @@ type PageConfig struct {
 var defaultConfig = PageConfig{
 	Title:       "SkillNODE",
 	Description: "SkillNODE — Train hard. Look sharp. The premium skill platform for typing, coding, math, grammar, and multiplayer competition.",
-	Version:     "1.0.0",
+	Version:     "1.0.1",
 	Year:        time.Now().Year(),
 	Author:      "Voxion Labs",
 }

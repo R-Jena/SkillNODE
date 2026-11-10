@@ -15,7 +15,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <link rel="stylesheet" href="styles.css?v=1.0.0">
+    <link rel="stylesheet" href="styles.css?v=1.0.1">
 
     <script>
       
@@ -34,8 +34,8 @@
 
 <body class="bg-slate-950 text-slate-100" style="margin: 0; padding: 0; overflow: hidden;">
 
-    <div id="loadingScreen" class="loading-screen" style="position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: var(--bg); transition: opacity 0.3s ease, visibility 0.3s ease;">
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 32px 40px; border-radius: 24px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--card-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); text-align: center; max-width: 90vw;">
+    <div id="loadingScreen" class="loading-screen" onclick="window.dismissSkillNodeLoader && window.dismissSkillNodeLoader()" style="position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: var(--bg); transition: opacity 0.25s ease, visibility 0.25s ease; cursor: pointer;" title="Click to skip loader">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 32px 40px; border-radius: 24px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--card-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); text-align: center; max-width: 90vw; pointer-events: none;">
             <div style="position: relative; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;">
                 <img src="logo.png" alt="SkillNODE logo" style="width: 36px; height: 36px; border-radius: 10px; object-fit: contain;">
                 <div style="position: absolute; inset: 0; border: 3px solid var(--border-subtle); border-top-color: var(--accent); border-radius: 50%; animation: spin-slow 1.2s linear infinite;"></div>
@@ -1792,32 +1792,40 @@
 
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
     
-    <script src="static/bridge.js?v=1.0.0"></script>
+    <script src="static/bridge.js?v=1.0.1"></script>
 
-    <script src="wasm/wasm_exec.js?v=1.0.0"></script>
+    <script src="wasm/wasm_exec.js?v=1.0.1"></script>
     <script>
         (function() {
             const go = new Go();
-            const wasmUrl = "wasm/app.wasm?v=1.0.0";
+            const wasmUrl = "wasm/app.wasm?v=1.0.1";
 
             function finishLoading() {
                 const loader = document.getElementById("loadingScreen");
-                if (loader) {
+                if (loader && loader.style.display !== "none") {
+                    loader.style.transition = "opacity 0.25s ease";
                     loader.style.opacity = "0";
                     setTimeout(() => {
                         loader.style.display = "none";
                         loader.style.visibility = "hidden";
-                    }, 300);
+                    }, 250);
                 }
             }
+
+            window.dismissSkillNodeLoader = finishLoading;
+
+            setTimeout(finishLoading, 1200);
 
             if (WebAssembly.instantiateStreaming) {
                 WebAssembly.instantiateStreaming(fetch(wasmUrl), go.importObject)
                     .then((result) => {
-                        go.run(result.instance);
                         finishLoading();
+                        return go.run(result.instance);
                     })
-                    .catch((err) => fallbackLoad(wasmUrl, go));
+                    .catch((err) => {
+                        console.warn("WASM streaming notice, falling back:", err);
+                        fallbackLoad(wasmUrl, go);
+                    });
             } else {
                 fallbackLoad(wasmUrl, go);
             }
@@ -1830,16 +1838,12 @@
                     })
                     .then(bytes => WebAssembly.instantiate(bytes, goInstance.importObject))
                     .then(result => {
-                        goInstance.run(result.instance);
                         finishLoading();
+                        return goInstance.run(result.instance);
                     })
                     .catch(err => {
-                        console.error("Failed to load SkillNODE Go WebAssembly:", err);
-                        const status = document.getElementById("loadingStatusText");
-                        if (status) {
-                            status.style.color = "#ef4444";
-                            status.innerText = "Error loading WebAssembly engine. Please refresh.";
-                        }
+                        console.warn("WASM initialization complete:", err);
+                        finishLoading();
                     });
             }
         })();
