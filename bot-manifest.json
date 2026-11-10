@@ -16,10 +16,10 @@
     ]
   },
   "ledger": {
-    "last_commit_sha": "e0cecabd22d01fca8b575f8868a091f8e838c7e7",
-    "last_commit_message": "feat(arena): implement Reading Intel, Guess Works, Grammar Edge and multi-language Code Arena",
+    "last_commit_sha": "41f05228e2d30604e2f7172a5e7646917b443f4d",
+    "last_commit_message": "fix(loader): auto-dismiss loading screen, silent backend healthcheck, and bump v1.0.1",
     "last_commit_author": "liambrooks-lab",
-    "last_updated_utc": "2026-11-10T15:08:04Z",
+    "last_updated_utc": "2026-11-10T15:18:44Z",
     "build_status": "verified",
     "system_architecture": {
       "frontend_pipeline": "Dynamic Go Templates (.tmpl)",
